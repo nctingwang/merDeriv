@@ -1,0 +1,44 @@
+## import
+importFrom("methods", 
+           "is", "new", "slot")
+
+importFrom("stats", 
+           "vcov", "aggregate")
+
+importFrom("Matrix", 
+           "forceSymmetric", "lu")
+
+importClassesFrom("Matrix", 
+                   "dgCMatrix", "dtCMatrix", "dgTMatrix", "dsCMatrix", "dgeMatrix")
+
+importMethodsFrom("Matrix", 
+                  "*", "solve", "t", "which", "diag", "crossprod", "tcrossprod", "chol")
+
+importFrom("utils", 
+           "combn")
+
+importFrom("sandwich",
+           "estfun", "bread")
+
+importFrom("lme4", 
+            "getME")
+
+importClassesFrom("lme4", 
+                   "lmerMod")
+
+importFrom("nonnest2", 
+            "llcont")
+
+
+## S3method
+S3method(estfun, lmerMod)
+S3method(vcov, lmerMod)
+S3method(bread, lmerMod)
+S3method(llcont, lmerMod)
+
+
+## export
+export(estfun.lmerMod)
+export(vcov.lmerMod)
+export(bread.lmerMod)
+export(llcont.lmerMod)
