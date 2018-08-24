@@ -1,9 +1,7 @@
-vcov.lmerMod <- function(object, full = TRUE, ...) {
+vcov.lmerMod <- function(object, full = FALSE, information = "expected", ...) {
   if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
-  if (object@devcomp$dims[10] != 0) stop("estfun.lmerMod() only works for ML estimation.")
   
-  
-  ## preparation for Block 4:
+  ## preparation for short cuts:
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(object, "ALL")
   
@@ -14,10 +12,15 @@ vcov.lmerMod <- function(object, full = TRUE, ...) {
   V <- (tcrossprod(Zlam, Zlam) + diag(1, parts$n)) * (parts$sigma)^2
   M <- solve(chol(V))
   invV <- tcrossprod(M, M)
+  LambdaInd <- parts$Lambda
+  LambdaInd@x[] <- as.double(parts$Lind)
+  invVX <- crossprod(parts$X, invV)
+  Pmid <- solve(crossprod(parts$X, t(invVX)))
+  P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))
     
-  ## block 1 fixhes 
+  ## block 1 fixhes
+  fixvar <- solve(tcrossprod(crossprod(parts$X, invV), t(parts$X)))
   if (full == FALSE) {
-    fixvar <- solve(tcrossprod(crossprod(parts$X, invV), t(parts$X)))
     fixvar  
   } else {
     fixhes <- tcrossprod(crossprod(parts$X, invV), t(parts$X))
@@ -30,11 +33,9 @@ vcov.lmerMod <- function(object, full = TRUE, ...) {
     devLambda <- vector("list", uluti)
     score_varcov <- matrix(NA, nrow = length(parts$y), ncol = uluti)
     for (i in 1:uluti) {
-      devLambda[[i]] <- parts$Lambda
-      devLambda[[i]][which(devLambda[[i]] != parts$theta[i])] <- 0
-      devLambda[[i]][which(parts$Lambda == parts$theta[i])] <- 1
-      devLambda[[i]] <- forceSymmetric(devLambda[[i]], uplo = "L")
-      devV[[i]] <- tcrossprod(tcrossprod(parts$Z, t(devLambda[[i]])), parts$Z)
+      devLambda[[i]] <- forceSymmetric(LambdaInd==i, uplo = "L")
+      devV[[i]] <- tcrossprod(tcrossprod(parts$Z, t(devLambda[[i]])),
+        parts$Z)
     }
     devV[[(uluti+1)]] <- diag(1, nrow(parts$X))
   
@@ -44,21 +45,62 @@ vcov.lmerMod <- function(object, full = TRUE, ...) {
     entries <- rbind(matrix(rep(1: (uluti + 1), each = 2),
       (uluti + 1), 2, byrow = TRUE), t(combn((uluti + 1), 2)))
       entries <- entries[order(entries[,1], entries[,2]), ]
-  
-    for (i in 1: nrow(entries)) {
-      ranhes[lower.tri(ranhes, diag = TRUE)][i] <- as.numeric((1/2) *
-        sum(diag(tcrossprod(tcrossprod(crossprod(invV, devV[[entries[i,1]]]), 
-        invV), t(devV[[entries[i,2]]])))))
+    ## ML estimates
+    if (object@devcomp$dims[10] == 0) {
+      if(information == "expected") {
+        for (i in 1: nrow(entries)) {
+          ranhes[lower.tri(ranhes, diag = TRUE)][i] <- as.numeric((1/2) *
+            sum(diag(tcrossprod(tcrossprod(crossprod(invV,
+            devV[[entries[i,1]]]), invV), t(devV[[entries[i,2]]])))))
+        }
+      }
+       if(information == "observed") {
+        for (i in 1: nrow(entries)) {
+          ranhes[lower.tri(ranhes, diag = TRUE)][i] <- -as.numeric((1/2) *
+            sum(diag(tcrossprod(tcrossprod(crossprod(invV,
+            devV[[entries[i,1]]]), invV), t(devV[[entries[i,2]]]))))) +
+              tcrossprod((tcrossprod((crossprod(yXbe,
+              tcrossprod(tcrossprod(crossprod(invV,
+              devV[[entries[i,1]]]), invV), t(devV[[entries[i,2]]])))),
+              invV)), t(yXbe))
+        }
+      }      
     }
+    ## REML estimates
+    if (object@devcomp$dims[10] == 2|object@devcomp$dims[10] == 1) {
+      if(information == "expected") {
+        for (i in 1: nrow(entries)) {
+          ranhes[lower.tri(ranhes, diag = TRUE)][i] <- as.numeric((1/2) *
+            sum(diag(tcrossprod(tcrossprod(crossprod(P,
+            devV[[entries[i,1]]]), P), t(devV[[entries[i,2]]])))))
+        }
+      }
+      if(information == "observed") {
+        for (i in 1: nrow(entries)) {
+          ranhes[lower.tri(ranhes, diag = TRUE)][i] <- -as.numeric((1/2) *
+            sum(diag(tcrossprod(tcrossprod(crossprod(P,
+            devV[[entries[i,1]]]), P), t(devV[[entries[i,2]]]))))) +
+            tcrossprod((tcrossprod((crossprod(yXbe,
+              tcrossprod(tcrossprod(crossprod(invV,
+              devV[[entries[i,1]]]), P), t(devV[[entries[i,2]]])))),
+              invV)), t(yXbe))             
+        }
+      }      
+    }
+      
     ranhes <- forceSymmetric(ranhes, uplo = "L")
   
     ## block 2 and block 3: second derivative of sigma and beta.
-    varcov_beta <- matrix(NA, length(devV), length(parts$beta))
-    for (j in 1 : (length(devV))) {
-      varcov_beta[j,] <- as.vector(tcrossprod(crossprod(parts$X, 
-        (tcrossprod(crossprod(invV, devV[[j]]), invV))), t(yXbe)))
+    if (information == "expected"){
+        varcov_beta <- matrix(0, length(devV), length(parts$beta))
     }
-  
+    if (information == "observed"){
+        varcov_beta <- matrix(NA, length(devV), length(parts$beta))
+        for (j in 1 : (length(devV))) {
+          varcov_beta[j,] <- as.vector(tcrossprod(crossprod(parts$X, 
+            (tcrossprod(crossprod(invV, devV[[j]]), invV))), t(yXbe)))
+        }
+    }
     ## Organize full_varcov
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),
       cbind(varcov_beta, ranhes)))
@@ -66,6 +108,13 @@ vcov.lmerMod <- function(object, full = TRUE, ...) {
     colnames(full_varcov) <- c(names(parts$fixef), paste("cov",
       names(parts$theta), sep="_"), "residual")
 
-    return(full_varcov)
+    callingFun <- try(deparse(sys.call(-2)), silent = TRUE)
+    if(length(callingFun) > 1) callingFun <- paste(callingFun, collapse="")
+    if(!inherits(callingFun, "try-error") & grepl("summary.merMod", callingFun)){
+      return(fixvar)
+    } else {
+      return(full_varcov)
+    }
   }
 }
+

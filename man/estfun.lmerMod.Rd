@@ -8,7 +8,7 @@
   scores, evaluated at the ML estimates.
 }
 \usage{
-  \method{estfun}{lmerMod}(object, level = 2, \dots)
+\method{estfun}{lmerMod}(object, level = 2, \dots)
 }
 \arguments{
   \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
@@ -17,7 +17,9 @@
   \item{\dots}{additional arguments.}
 }
 \value{An \emph{n} by \emph{p} score matrix, corresponding to \emph{n} 
-  observations and \emph{p} parameters. 
+  observations and \emph{p} parameters. For models with multiple
+  clustering variables (three-level models, crossed random effects), an
+  error is thrown if \code{level==2}.
 }
 \references{
   Wang, T. & Merkle, E. C. (2016). Derivative Computations and Robust Standard
@@ -25,7 +27,7 @@
   \url{https://arxiv.org/abs/1612.04911} 
 }
 \examples{
-  \dontrun{
+\dontrun{
     # The sleepstudy example
     lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
@@ -34,6 +36,6 @@
 
     # clusterwise scores
     estfun(lme4fit, level = 2)
-  }
+}
 }
 

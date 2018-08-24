@@ -7,7 +7,7 @@
   ML estimates.
 }
 \usage{
-  \method{llcont}{lmerMod}(object, \dots)
+\method{llcont}{lmerMod}(object, \dots)
 }
 \arguments{
   \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
@@ -24,11 +24,11 @@
   \url{https://arxiv.org/pdf/1402.6720v3}
 }
 \examples{
-  \dontrun{
+\dontrun{
     # The sleepstudy example
     lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
     # casewise log likelihood
     llcont(lme4fit)
-  }  
+}  
 }
