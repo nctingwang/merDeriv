@@ -4,6 +4,9 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(object, "ALL")
   if (length(parts$l_i) > 1 & level == 2) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
+  ## generate warnings for models with high correlation
+  cor <- attr(VarCorr(object)[[1]], "correlation")
+  if(any(abs(cor[lower.tri(cor)]) > .9)) warning("Correlations > |.9| detected. Scores of random (co)variances may be unstable.")
   
   ## prepare shortcuts
   yXbe <- parts$y - tcrossprod(parts$X, t(parts$beta))
@@ -12,8 +15,6 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   M <- solve(chol(V))
   invV <- tcrossprod(M, M)
   yXbesoV <- crossprod(yXbe, invV)
-  LambdaInd <- parts$Lambda
-  LambdaInd@x[] <- as.double(parts$Lind)
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))
@@ -25,6 +26,8 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   ## prepare for score of variance covariance parameters. 
   ## get d(G)/d(sigma), faciliated by d(Lambda).
   uluti <- length(parts$theta)
+  LambdaInd <- parts$Lambda
+  LambdaInd@x[] <- seq(1:uluti)
   devLambda <- vector("list", uluti)
   score_varcov <- matrix(NA, nrow = length(parts$y), ncol = uluti)
   devV <- vector ("list", (uluti + 1))
@@ -64,7 +67,7 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   ## Clusterwise scores if level==2
   if (level == 2) {
     index <- parts$flist[[1]]
-    index <- index[order(index)]
+    #index <- index[order(index)]
     score <- aggregate(x = score, by = list(index), FUN = sum)[,-1]
   }
 
