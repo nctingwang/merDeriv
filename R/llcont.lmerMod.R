@@ -17,5 +17,5 @@ llcont.lmerMod <- function(object, ...) {
   ll <- -(1/2) * log(2*pi) - (1/2) * log(diag(lu(V)@U)) - 
     (1/2) * t(yXbesoV) * yXbe 
   
-  return(ll)
+  return(as.numeric(ll))
 }
