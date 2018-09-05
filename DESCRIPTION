@@ -1,6 +1,6 @@
 Package: merDeriv
 Title: Case-Wise and Cluster-Wise Derivatives for Mixed Effects Models 
-Version: 0.1-4
+Version: 0.1-5
 Authors@R: c(person(given = "Ting", family = "Wang",
                     role = c("aut", "cre"),
                     email = "twb8d@mail.missouri.edu"),
@@ -8,12 +8,15 @@ Authors@R: c(person(given = "Ting", family = "Wang",
                     role  = c("aut"),
                     email = "merklee@missouri.edu")
             )
-Description: Compute analytic case-wise and cluster-wise derivatives for mixed effects models with respect to fixed effect parameters, random effect (co)variances, and residual variances.
-Depends: R (>= 3.2.3)
-Imports: methods, stats, utils, sandwich, Matrix, lme4, nonnest2
+Description: Compute analytic case-wise and cluster-wise derivative for 
+  mixed effects models with respect to fixed effects parameter, random effect (co)variances, 
+  and residual variance.
+Depends: R (>= 3.2.3), lme4 (>= 1.1-10), stats, methods, nonnest2, sandwich
+Imports: utils, Matrix
 License: GPL (>= 2)
 LazyData: yes
 URL: http://semtools.r-forge.r-project.org
 NeedsCompilation: no
-Author: Ting Wang [aut, cre], Edgar Merkle [aut]
+Author: Ting Wang [aut, cre],
+        Edgar Merkle [aut]
 Maintainer: Ting Wang <twb8d@mail.missouri.edu>
