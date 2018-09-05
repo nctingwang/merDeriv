@@ -1,6 +1,6 @@
 llcont.lmerMod <- function(object, ...) {
-  if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
-  if (object@devcomp$dims[10] != 0) stop("estfun.lmerMod() only works for ML estimation.")
+  if (!is(object, "lmerMod")) stop("llcont.lmerMod() only works for lmer() models.")
+  if (object@devcomp$dims[10] != 0) stop("llcont.lmerMod() only works for ML estimation.")
   
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(object, "ALL")
