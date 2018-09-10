@@ -30,7 +30,7 @@
     # The sleepstudy example
     lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
-    # casewise log likelihood
+    # clusterwise log likelihood
     llcont(lme4fit)
 }  
 }

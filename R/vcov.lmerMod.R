@@ -1,5 +1,16 @@
-vcov.lmerMod <- function(object, full = FALSE, information = "expected", ...) {
+vcov.lmerMod <- function(object, ...) {
   if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
+  
+  dotdotdot <- list(...)
+  if("full" %in% names(dotdotdot) | "information" %in% names(dotdotdot)){
+    full <- dotdotdot$full
+    information <- dotdotdot$information
+  } else {
+    full <- FALSE
+    information <- "expected"
+  }
+  if(!('full' %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
+  if(!('information' %in% c("expected", "observed"))) stop("invalid 'information' argument supplied")
   
   ## preparation for short cuts:
   ## get all elements by getME and exclude multiple random effect models.
@@ -8,12 +19,13 @@ vcov.lmerMod <- function(object, full = FALSE, information = "expected", ...) {
   ## shortcut, y-X\beta
   yXbe <- parts$y - tcrossprod(parts$X, t(parts$beta))
   ## total variance
+  uluti <- length(parts$theta)
   Zlam <- tcrossprod(parts$Z, parts$Lambdat)
   V <- (tcrossprod(Zlam, Zlam) + diag(1, parts$n)) * (parts$sigma)^2
   M <- solve(chol(V))
   invV <- tcrossprod(M, M)
   LambdaInd <- parts$Lambda
-  LambdaInd@x[] <- as.double(parts$Lind)
+  LambdaInd@x[] <- seq(1:uluti) 
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))

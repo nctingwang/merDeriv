@@ -8,24 +8,22 @@
   of class \code{\linkS4class{lmerMod}}.  
 }
 \usage{
-\method{bread}{lmerMod}(object, full = TRUE, information = "expected", \dots)
+\method{bread}{lmerMod}(x, \dots)
 }
 \arguments{
-  \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
-  \item{full}{If \code{full = TRUE} (the default), returns the bread
-    component of the
-    Huber-White sandwich estimator for all 
-    fitted parameters, including fixed effect parameters, random 
-    effect (co)variances, and residual variance.  
-    If \code{full = FALSE}, returns the bread component for only
-    fixed effect parameters.} 
-   \item{information}{If \code{information = "expected"} (default),
+  \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item{\dots}{additional arguments, including \code{full} and \code{information}. 
+    If \code{full = FALSE} (default), returns the 
+    variance-covariance matrix of only fixed effect 
+    parameters. If \code{full = TRUE} , returns the variance-covariance matrix 
+    for all fitted parameters (including fixed effect parameters, 
+    random effect (co)variances, and residual variance. 
+    If \code{information = "expected"} (default),
     the variance-covariance matrix 
     is based on the inversion of Fisher information matrix.   
     If \code{information = "observed"}, the variance-covariance matrix
     is based on the observed Fisher information, which is the negative
-    of the Hessian matrix.}
-  \item{\dots}{additional arguments.}
+    of Hessian matrix. }
 }
 \value{
   A \emph{p} by \emph{p} "bread" matrix for the Huber-White sandwich estimator 

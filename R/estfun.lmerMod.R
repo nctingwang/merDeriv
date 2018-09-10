@@ -1,11 +1,20 @@
-estfun.lmerMod <- function(object, level = 2, ...) {
-  if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
+estfun.lmerMod <- function(x, ...) {
+  if (!is(x, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
     
   ## get all elements by getME and exclude multiple random effect models.
-  parts <- getME(object, "ALL")
+  parts <- getME(x, "ALL")
   if (length(parts$l_i) > 1 & level == 2) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
   
+  dotdotdot <- list(...)
+  if("level" %in% names(dotdotdot)){
+    level <- dotdotdot$level
+  } else {
+    level <- 2
+  }
+  if(!(level %in% c(1L, 2L))) stop("invalid 'level' argument supplied")
+  
   ## prepare shortcuts
+  uluti <- length(parts$theta)
   yXbe <- parts$y - tcrossprod(parts$X, t(parts$beta))
   Zlam <- tcrossprod(parts$Z, parts$Lambdat)
   V <- (tcrossprod(Zlam, Zlam) + diag(1, parts$n)) * (parts$sigma)^2
@@ -13,7 +22,7 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   invV <- tcrossprod(M, M)
   yXbesoV <- crossprod(yXbe, invV)
   LambdaInd <- parts$Lambda
-  LambdaInd@x[] <- as.double(parts$Lind)
+  LambdaInd@x[] <- seq(1:uluti)
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))
@@ -24,7 +33,6 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   
   ## prepare for score of variance covariance parameters. 
   ## get d(G)/d(sigma), faciliated by d(Lambda).
-  uluti <- length(parts$theta)
   devLambda <- vector("list", uluti)
   score_varcov <- matrix(NA, nrow = length(parts$y), ncol = uluti)
   devV <- vector ("list", (uluti + 1))
@@ -39,7 +47,7 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   score_varcov <- matrix(NA, nrow = nrow(parts$X), ncol = (uluti + 1))
   
   ## ML estimates. 
-  if (object@devcomp$dims[10] == 0) {
+  if (x@devcomp$dims[10] == 0) {
     for (j in 1:length(devV)) {
       score_varcov[,j] <- as.vector(-(1/2) * diag(crossprod(invV, devV[[j]])) +
       t((1/2) * tcrossprod(tcrossprod(yXbesoV, t(devV[[j]])), invV)) *
@@ -48,7 +56,7 @@ estfun.lmerMod <- function(object, level = 2, ...) {
   }
 
   ## REML estimates
-   if (object@devcomp$dims[10] == 2|object@devcomp$dims[10] == 1) {
+   if (x@devcomp$dims[10] == 2|x@devcomp$dims[10] == 1) {
     for (j in 1:length(devV)) {
       score_varcov[,j] <- as.vector(-(1/2) * diag(crossprod(P, devV[[j]])) +
       t((1/2) * tcrossprod(tcrossprod(yXbesoV, t(devV[[j]])), invV)) *
