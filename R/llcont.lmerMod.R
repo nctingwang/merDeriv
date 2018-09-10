@@ -1,9 +1,17 @@
-llcont.lmerMod <- function(object, ...) {
-  if (!is(object, "lmerMod")) stop("llcont.lmerMod() only works for lmer() models.")
-  if (object@devcomp$dims[10] != 0) stop("llcont.lmerMod() only works for ML estimation.")
+llcont.lmerMod <- function(x, ...) {
+  if (!is(x, "lmerMod")) stop("llcont.lmerMod() only works for lmer() models.")
+  if (x@devcomp$dims[10] != 0) stop("llcont.lmerMod() only works for ML estimation.")
+
+  dotdotdot <- list(...)
+  if("level" %in% names(dotdotdot)){
+    level <- dotdotdot$level
+  } else {
+    level <- 2
+  }
+  if(!(level %in% c(1L, 2L))) stop("invalid 'level' argument supplied")
   
   ## get all elements by getME and exclude multiple random effect models.
-  parts <- getME(object, "ALL")
+  parts <- getME(x, "ALL")
   
   ## prepare shortcuts
   yXbe <- parts$y - tcrossprod(parts$X, t(parts$beta))
@@ -15,7 +23,16 @@ llcont.lmerMod <- function(object, ...) {
   
   ## get each observation's log likelihood
   ll <- -(1/2) * log(2*pi) - (1/2) * log(diag(lu(V)@U)) - 
-    (1/2) * t(yXbesoV) * yXbe 
+    (1/2) * t(yXbesoV) * yXbe
+  ll <- as.numeric(ll)
+
+  ## Clusterwise if level==2
+  if (level == 2) {
+    index <- parts$flist[[1]]
+    lltmp <- aggregate(x = ll, by = list(index), FUN = sum)
+    ll <- lltmp[,-1]  
+    names(ll) <- lltmp[,1]
+  }
   
-  return(as.numeric(ll))
+  return(ll)
 }

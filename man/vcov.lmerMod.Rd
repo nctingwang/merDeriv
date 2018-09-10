@@ -40,6 +40,6 @@
     lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
     # variance covariance matrix for all parameters
-    vcov(lme4fit)
+    vcov(lme4fit, full = TRUE)
 }
 }

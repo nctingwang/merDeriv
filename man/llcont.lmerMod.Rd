@@ -7,11 +7,11 @@
   ML estimates.
 }
 \usage{
-\method{llcont}{lmerMod}(object, \dots)
+\method{llcont}{lmerMod}(x, \dots)
 }
 \arguments{
-  \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
-  \item{\dots}{additional arguments.}
+  \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item{\dots}{additional arguments, including \code{level}.}
 }
 \value{A vector of length \emph{n}, containing log-likelihoods for the \emph{n} observations. }
 \references{
