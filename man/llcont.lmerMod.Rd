@@ -11,7 +11,8 @@
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
-  \item{\dots}{additional arguments, including \code{level}.}
+  \item{\dots}{additional arguments, including \code{level} (= 1 for
+    case-wise contributions; 2 for cluster-wise contributions).}
 }
 \value{A vector of length \emph{n}, containing log-likelihoods for the \emph{n} observations. }
 \references{
