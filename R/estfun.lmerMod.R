@@ -1,6 +1,11 @@
 estfun.lmerMod <- function(x, ...) {
   if (!is(x, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
   
+  ## warning for high correlations. 
+  cor <- attr(lme4::VarCorr(x)[[1]], "correlation")
+  if(any(abs(cor[lower.tri(cor)]) > .9)) warning("Correlations > |.9| detected. Scores of random (co)variances may be unstable.")
+  
+  ## obtain dot arguments
   dotdotdot <- list(...)
   if("level" %in% names(dotdotdot)){
     level <- dotdotdot$level
