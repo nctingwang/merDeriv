@@ -6,15 +6,20 @@ bread.lmerMod <- function (x, ...){
   if (length(parts$l_i) > 1) stop("Multiple cluster variables detected. Robust SEs are unavailable.")
   
   dotdotdot <- list(...)
-  if("full" %in% names(dotdotdot) | "information" %in% names(dotdotdot)){
+  if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full
-    information <- dotdotdot$information
   } else {
     full <- FALSE
+  }
+  if ("information" %in% names(dotdotdot)) {
+    information <- dotdotdot$information
+  } else {
     information <- "expected"
   }
-  if(!('full' %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
-  if(!('information' %in% c("expected", "observed"))) stop("invalid 'information' argument supplied")
+  
+if(!(full %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
+if(!(information %in% c("expected", "observed"))) stop("invalid 'information' argument supplied")
+  
   object <- x
   return(vcov.lmerMod(object, full = full, information = information) * parts$l_i)
 }

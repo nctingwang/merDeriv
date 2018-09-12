@@ -1,9 +1,5 @@
 estfun.lmerMod <- function(x, ...) {
   if (!is(x, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
-    
-  ## get all elements by getME and exclude multiple random effect models.
-  parts <- getME(x, "ALL")
-  if (length(parts$l_i) > 1 & level == 2) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
   
   dotdotdot <- list(...)
   if("level" %in% names(dotdotdot)){
@@ -12,6 +8,10 @@ estfun.lmerMod <- function(x, ...) {
     level <- 2
   }
   if(!(level %in% c(1L, 2L))) stop("invalid 'level' argument supplied")
+    
+  ## get all elements by getME and exclude multiple random effect models.
+  parts <- getME(x, "ALL")
+  if (length(parts$l_i) > 1 & level == 2) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
   
   ## prepare shortcuts
   uluti <- length(parts$theta)

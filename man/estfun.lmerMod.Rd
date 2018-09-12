@@ -12,14 +12,15 @@
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
-  \item{\dots}{additional arguments, including \code{level}.  If \code{level = 1}, 
-  case-wise scores are returned.  If \code{level = 2} (the default), 
-  cluster-wise scores are returned.}
+  \item{\dots}{additional arguments, including \code{level}
+    (\code{level = 2} is default; see details).}
 }
-\value{An \emph{g} (or \emph{n}) by \emph{p} score matrix, corresponding to 
-  \emph{g} clusters (\emph{n} observations) and \emph{p} parameters. 
+\value{If \code{level = 2}, a \emph{g} by \emph{p} score matrix, corresponding to 
+  \emph{g} clusters and \emph{p} parameters. If \code{level = 1}, a \emph{n} by 
+  \emph{p} score matrix, corresponding to 
+  \emph{n} observations and \emph{p} parameters. 
   For models with multiple clustering variables (three-level models, 
-  crossed random effects), an error is thrown if \code{level==2}.
+  crossed random effects), an error is thrown if \code{level = 2}.
 }
 \references{
   Wang, T. & Merkle, E. C. (2016). Derivative Computations and Robust Standard
