@@ -47,6 +47,6 @@
     lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
     # bread component for all parameters
-    bread(lme4fit)
+    bread(lme4fit, full = TRUE)
 }
 }
