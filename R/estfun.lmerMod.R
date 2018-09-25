@@ -73,14 +73,14 @@ estfun.lmerMod <- function(x, ...) {
   score <- cbind(as.matrix(score_beta), score_varcov)
   colnames(score) <- c(names(parts$fixef),
                        paste("cov", names(parts$theta), sep="_"), "residual")
-  
+
   ## Clusterwise scores if level==2
   if (level == 2) {
     #index <- rep(1:parts$l_i, (parts$n/parts$l_i))
     index <- parts$flist[[1]]
     #index <- index[order(index)]
     scoretemp <- aggregate(x = score, by = list(index), FUN = sum)
-    score <- scoretemp[,-1]  
+    score <- as.matrix(scoretemp[,-1])
     rownames(score) <- scoretemp[,1]
   }
   
