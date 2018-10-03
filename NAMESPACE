@@ -35,6 +35,7 @@ S3method(estfun, lmerMod)
 S3method(vcov, lmerMod)
 S3method(bread, lmerMod)
 S3method(llcont, lmerMod)
+S3method(vcov, glmerMod)
 
 
 ## export
@@ -42,3 +43,4 @@ export(estfun.lmerMod)
 export(vcov.lmerMod)
 export(bread.lmerMod)
 export(llcont.lmerMod)
+export(vcov.glmerMod)
