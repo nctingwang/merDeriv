@@ -1,0 +1,18 @@
+bibentry(bibtype = "Article",
+  title        = "{merDeriv}: Derivative Computations for Linear Mixed Effects Models with Application to Robust Standard Errors",
+  author       = c(person(given = "Ting",
+                          family = "Wang",
+                          email = "twb8d@mail.missouri.edu"),
+                   person(given = c("Edgar", "C."),
+                          family = "Merkle",
+                          email = "merklee@missouri.edu")),
+  journal      = "Journal of Statistical Software, Code Snippets",
+  year         = "2018",
+  volume       = "87",
+  number       = "1",
+  pages        = "1--16",
+  doi          = "10.18637/jss.v087.c01",
+
+  header       = "To cite merDeriv in publications use:"
+)
+
