@@ -18,9 +18,9 @@
   the number of clusters. If \code{level = 1}, a vector of length \emph{n}, 
   containing log-likelihoods for all \emph{n} observations.}
 \references{
-  Wang, T. & Merkle, E. C. (2016). Derivative Computations and Robust Standard
-  Errors for Linear Mixed Effects Models in lme4. 
-  \url{https://arxiv.org/abs/1612.04911}
+  Wang, T. & Merkle, E. C. (2018). Derivative Computations and Robust Standard
+  Errors for Linear Mixed Effects Models in lme4. \emph{Journal of Statistical 
+  Software}, \bold{87}(1), 1-16. \doi{10.18637/jss.v087.c01}
   
   Merkle, E. C., You, D. and Preacher, K. J., 2016. Testing Nonnested Structural 
   Equation Models. \emph{Psychological Methods}, \bold{21}(2), 151. 
