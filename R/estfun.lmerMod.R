@@ -4,19 +4,26 @@ estfun.lmerMod <- function(x, ...) {
   ## warning for high correlations. 
   cor <- attr(lme4::VarCorr(x)[[1]], "correlation")
   if(any(abs(cor[lower.tri(cor)]) > .9)) warning("Correlations > |.9| detected. Scores of random (co)variances may be unstable.")
+
+  ## get all elements by getME and exclude multiple random effect models.
+  parts <- getME(x, "ALL")
   
   ## obtain dot arguments
   dotdotdot <- list(...)
   if("level" %in% names(dotdotdot)){
     level <- dotdotdot$level
   } else {
-    level <- 2
+    if(length(parts$l_i) > 1L){
+      ## multiple cluster variables, so need level=1
+      level <- 1L
+    } else {
+      level <- 2L
+    }
   }
+
+  ## checks
   if(!(level %in% c(1L, 2L))) stop("invalid 'level' argument supplied")
-    
-  ## get all elements by getME and exclude multiple random effect models.
-  parts <- getME(x, "ALL")
-  if (length(parts$l_i) > 1 & level == 2) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
+  if (length(parts$l_i) > 1L & level == 2L) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
   
   ## prepare shortcuts
   uluti <- length(parts$theta)
