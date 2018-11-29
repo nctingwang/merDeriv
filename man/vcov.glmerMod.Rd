@@ -26,7 +26,9 @@
   \code{lme4}. 
 }
 \references{
-  REFERENCE
+  Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 
+  Fitting Linear Mixed-Effects Models Using lme4. \emph{Journal of
+  Statistical Software}, \bold{67}(1), 1-48. \doi{10.18637/jss.v067.i01}. 
 }
 \examples{
 \dontrun{
