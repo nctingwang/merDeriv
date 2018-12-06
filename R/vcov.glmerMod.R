@@ -7,7 +7,7 @@ vcov.glmerMod <- function(object, ...) {
   }
   
   if (full == FALSE) {
-    full_vcov <- vcov(object)
+    full_vcov <- vcov.merMod(object)
   } else {
     ## Hessian was based on deviance function, which is the 
     ## -2*LogLik. That's why divided by -2
