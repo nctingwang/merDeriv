@@ -6,13 +6,14 @@ importFrom("stats",
            "vcov", "aggregate")
 
 importFrom("Matrix", 
-           "forceSymmetric", "lu")
+           "forceSymmetric", "lu", "Diagonal")
 
 importClassesFrom("Matrix", 
                    "dgCMatrix", "dtCMatrix", "dgTMatrix", "dsCMatrix", "dgeMatrix")
 
 importMethodsFrom("Matrix", 
-                  "*", "solve", "t", "which", "diag", "crossprod", "tcrossprod", "chol")
+                  "*", "solve", "t", "which", "diag", "crossprod", "tcrossprod", 
+                  "chol")
 
 importFrom("utils", 
            "combn")
@@ -21,7 +22,7 @@ importFrom("sandwich",
            "estfun", "bread")
 
 importFrom("lme4", 
-            "getME")
+            "getME", "vcov.merMod")
 
 importClassesFrom("lme4", 
                    "lmerMod")
@@ -29,6 +30,8 @@ importClassesFrom("lme4",
 importFrom("nonnest2", 
             "llcont")
 
+importFrom("lavaan", 
+            "lav_matrix_trace")
 
 ## S3method
 S3method(estfun, lmerMod)
