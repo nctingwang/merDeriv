@@ -151,6 +151,8 @@ ly.prod <- function(S, Y = NULL, fe.pred, Zi, re.modes, grp, fam) {
 if(FALSE){
   library("lme4")
   source("llcont.glmerMod.R")
+
+  ## random intercept model
   data(finance, package="smdata")
 
   fit2 <- glmer(corr ~ jmeth + (1 | item), data=finance,
@@ -161,15 +163,7 @@ if(FALSE){
   ## 3-dimensional, correlated random effects
   fit2 <- glmer(corr ~ jmeth + (jmeth | item), data=finance,
                 family=binomial)
-  ll2 <- llcontglmer(fit2, ngq=1)
+  ll2 <- llcont.glmerMod(fit2)
   c(sum(ll2), logLik(fit2))
 
-  ## but we can get more accurate than logLik() with extra
-  ## quadrature points:
-  ll2b <- llcontglmer(fit2, ngq=5)
-  sum(ll2b)
-
-  # TODO other families (poisson, etc). Not sure whether their
-  # aic() functions work similarly. Also scale parameters
-  # might make things more difficult.
 }
