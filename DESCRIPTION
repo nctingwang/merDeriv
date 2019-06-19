@@ -8,7 +8,7 @@ Authors@R: c(person(given = "Ting", family = "Wang",
                     role  = c("aut"),
                     email = "merklee@missouri.edu")
             )
-Description: Compute analytic case-wise and cluster-wise derivative for 
+Description: Compute case-wise and cluster-wise derivative for 
   mixed effects models with respect to fixed effects parameter, random effect (co)variances, 
   and residual variance.
 Depends: R (>= 3.2.3), lme4 (>= 1.1-10), stats, methods, nonnest2, sandwich, lavaan

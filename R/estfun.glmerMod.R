@@ -1,7 +1,6 @@
-estfun.glmerMod <- function(x){
+estfun.glmerMod <- function(x, ...){
     if (!is(x, "glmerMod")) stop("estfun.glmerMod() only works for glmer() models.")
-    if (length(x@theta) > 1 warning ("scores may be not accurate due to the
-fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random effects")
+    if (length(x@theta) > 1) warning ("scores may be not accurate due to the fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random effects")
   ## log-likelihood contributions of a glmer() model with
   ## one grouping variable (no crossed or nested random effects
   ## allowed for now). Much code is taken from Yves.
@@ -68,11 +67,12 @@ fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random 
   out <- matrix(NA, J, (ncol(X) + uluti + 1))  
         
   ## quadrature points:
+  lav_integration_gauss_hermite <- getFromNamespace("lav_integration_gauss_hermite", "lavaan")
   if(ndim == 1){
-    XW <- lavaan:::lav_integration_gauss_hermite(n    = ngq,
+    XW <- lav_integration_gauss_hermite(n    = ngq,
                                                  ndim = ndim)
   } else {
-    XW <- lavaan:::lav_integration_gauss_hermite(n    = ngq,
+    XW <- lav_integration_gauss_hermite(n    = ngq,
                                                  ndim = ndim,
                                                  dnorm = TRUE)
   }
@@ -96,7 +96,7 @@ fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random 
                   grp = as.numeric(grpnm[j]), fam = fam,
                   devLambda = devLambda, Lambda = parts$Lambda,
                   iLambda = iLambda,
-                  formula = fit@call$formula, frame = fit@frame)) %*% w.star)
+                  formula = x@call$formula, frame = x@frame)) %*% w.star)
 
       score[j,] <- out[j,-1]/out[j,1]
     } else {
@@ -106,7 +106,9 @@ fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random 
       etamns <- re.modes[[1]][j,]
 
       x.star <- t(as.matrix(C %*% t(XW$x) + as.numeric(etamns)))
-      w.star <- XW$w * (2*pi)^(ndim/2) * det(C) * exp(0.5 * apply(XW$x, 1, crossprod)) * lavaan:::lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim), Sigma = VarCov[[1]], log = FALSE)
+      lav_mvnorm_dmvnorm <- getFromNamespace("lav_mvnorm_dmvnorm", "lavaan")
+      w.star <- XW$w * (2*pi)^(ndim/2) * det(C) * exp(0.5 * apply(XW$x, 1, crossprod)) *     
+        lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim), Sigma = VarCov[[1]], log = FALSE)
 
       out[j,] <- (t(score.prod(S = x.star,
                                Xi = as.matrix(X[grps==grpnm[j],]),
@@ -117,7 +119,7 @@ fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random 
                                grp = as.numeric(grpnm[j]), fam = fam, 
                                devLambda = devLambda, Lambda = parts$Lambda,
                                iLambda = iLambda,
-                               formula = fit@call$formula, frame = fit@frame)) %*% w.star)
+                               formula = x@call$formula, frame = x@frame)) %*% w.star)
 
       score[j,] <- out[j,-1]/out[j,1]
     }
@@ -152,7 +154,7 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam, devLamb
   for(i in 1:nQ) {
     # add eta to fixed effects
     # TODO handle multiple grouping variables
-    eta <- if(is.matrix(S)) t(S[i,,drop = FALSE]) else x[i]
+    eta <- if(is.matrix(S)) t(S[i,,drop = FALSE]) else S[i]
     tmpre[grp,] <- eta
     linkyhat <- as.numeric(fe.pred + Zi %*% as.numeric(t(tmpre)))
     
@@ -204,157 +206,3 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam, devLamb
 }
 
 
-if(FALSE){
-  library("lme4")
-  source("llcont.glmerMod.R")
-  source("estfun.glmerMod.R")
-
-  
-  ## fit Rasch model in mirt
-  library("mirt")
-  data <- expand.table(LSAT7)[1:200,]
-  mod <- mirt(data, 1, itemtype="Rasch")
-
-  ## fit model in lme4
-  library("reshape2")
-  data$person <- as.numeric(rownames(data))
-  datalong <- melt(data, id = c("person"))
-  fit <- glmer(value ~ -1 + variable + (1|person), family = binomial, 
-               data = datalong, nAGQ = 20)
-  ## score from lme4
-  score <- estfun.glmerMod(fit)
-  colSums(score)
-  
-  ## compare score obtained from integrate()
-  ## defin jointdist() and fun2()
-  jointdist <- function(theta, x, alph, bet){
-    res <- matrix(NA, length(theta), length(alph))
-    for(j in 1:length(theta)){
-        res[j,] <- dbinom(x, size=1, prob=plogis(alph*theta[j] + bet))
-    }
-    apply(res, 1, prod) * dnorm(theta)
-  }
-
-   # deriv wrt slope
-  fun1 <- function(theta, x, alph, bet, xvec, avec, bvec){
-    (theta * (x - plogis(alph*theta + bet))) *
-        jointdist(theta, xvec, avec, bvec)
-  }
- 
-   ## deriv wrt intercept
-   fun2 <- function(theta, x, alph, bet, xvec, avec, bvec){
-     (x - plogis(alph*theta + bet)) * jointdist(theta, xvec, avec, bvec)
-   }
-
-  ## construct the score matrix by integrate()
-  data <- expand.table(LSAT7)[1:200,]
-  score2 <- matrix(NA, nrow(data), (2*ncol(data)))
-  ## ML estimates of item parameters:
-  itempars <- as.numeric(sapply(coef(mod), function(x) x[1:2]))
-  # equal slops: sqrt(1.023)
-  itempars[((1:5)*2 - 1)] <- itempars[((1:5)*2 - 1)]*sqrt(itempars[12]) 
-
-  avec <- itempars[((1:5)*2 - 1)] # equal slopes
-  bvec <- itempars[(1:5)*2] # intercepts
-  for(i in 1:nrow(data)){
-      normconst <- integrate(jointdist, -6, 6, x= as.numeric(data[i,]),
-                             alph=avec, bet=bvec)$value
-
-      for(j in 1:5){
-        par1loc <- (j-1)*2 + 1
-
-        score2[i,j] <- (1/normconst) * integrate(fun2, -6, 6,
-                                             x = as.numeric(data[i,j]),
-                                             alph = itempars[par1loc],
-                                             bet = itempars[(par1loc+1)],
-                                             xvec = as.numeric(data[i,]),
-                                             avec = avec, bvec = bvec)$value
-        score2[i,(5+j)] <- (1/normconst) * integrate(fun1, -6, 6, x=as.numeric(data[i,j]),
-                                                   alph=itempars[par1loc],
-                                                   bet=itempars[(par1loc+1)],
-                                                   xvec = as.numeric(data[i,]), avec=avec,
-                                                   bvec=bvec)$value
-     }
-  }
-
-  ## compare these two methods
-  ## fixed mathed
-  plot(score[,c(1:5)], score2[,c(1:5)])
-  ## random matched
-  plot(score[,6], apply(score2[,c(6:10)], 1, sum))
-
-  
-  ## compare with estfun.AllModelClass in mirt. 
-  library("mirt")
-  data <- expand.table(LSAT7)
-  mod <- mirt(data, 1, itemtype="Rasch")
-
-  ## fit model in lme4
-  library("reshape2")
-  ## extract from mirt
-  data$person <- as.numeric(rownames(data))
-  datalong <- melt(data, id = c("person"))
-  fit <- glmer(value ~ -1 + variable + (1|person), family = binomial, 
-               data = datalong, nAGQ = 20)
-  ## score from lme4
-  score <- estfun.glmerMod(fit)
-  mod1 <- mirt(expand.table(LSAT7), 1, SE = TRUE, SE.type = "crossprod")
-  sc1 <- estfun.AllModelClass(mod1)
-  ## reorganize sc1 to corresponds to the parameters
-  fix <- sc1[,c(2, 4, 6, 8, 10)]
-  random <- apply(sc1[,c(1,3, 5, 7, 9)], 1, sum)
-  plot(score[,1:5], fix)
-  plot(score[,6], random)
-  plot(score, cbind(fix,random))
-
-  ###########
-  ## non-canonical link check
-  fit2 <- glmer(value ~ -1 + variable + (1|person), family =
-                binomial(link = "cloglog"), 
-                data = datalong, nAGQ = 20)
-  fixscore2 <- estfun.glmerMod(fit2)
-  colSums(fixscore2)
-  
-
-#####################################################
-  ## fit poisson
-
-  # other families (poisson, etc). Make sure
-  # aic() functions work similarly. 
-  simfun <- function(ng = 20, nr = 100, fsd = 1, indsd = 0.2, b = c(1,
-     2)) {
-     ntot <- nr * ng
-     b.reff <- rnorm(ng, sd = fsd)
-     b.rind <- rnorm(ntot, sd = indsd)
-     x <- runif(ntot)
-     dd <- data.frame(x, f = factor(rep(c(1:ng), each = nr)),
-         obs = 1:ntot)
-     dd$eta0 <- model.matrix(~x, data = dd) %*% b
-     dd$eta <- with(dd, eta0 + b.reff[f] + b.rind[obs])
-     dd$mu <- exp(dd$eta)
-     dd$y <- with(dd, rpois(ntot, lambda = mu))
-     dd
-  }
-  dd <- simfun()
-  m0 <- glmer(y ~ x + (1|f), family = "poisson", data = dd, nAGQ = 20)
-  score <- estfun.glmerMod(m0)
-  colSums(score)
-
- 
-
- ## Models with more than 1 random effects can not have nAGQ > 1. Thus scores
- ## and log likelihood may not be precise. 
-##############################################
-  ## 3-dimensional, correlated random effects
-  data(finance, package="smdata")
-  fit2 <- glmer(corr ~ jmeth + (jmeth | item), data=finance,
-                family=binomial)
-  ll2 <- llcont.glmerMod(fit2)
-  c(sum(ll2), logLik(fit2))
-  
-
-  estfun.glmerMod(fit3)
-  colSums(sc3)
-
-
-}

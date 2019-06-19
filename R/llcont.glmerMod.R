@@ -1,4 +1,4 @@
-llcont.glmerMod <- function(x){
+llcont.glmerMod <- function(x, ...){
   ## log-likelihood contributions of a glmer() model with
   ## one grouping variable (no crossed or nested random effects
   ## allowed for now). Much code is taken from Yves.
@@ -53,11 +53,12 @@ llcont.glmerMod <- function(x){
   lik <- numeric(J)
 
   ## quadrature points:
+  lav_integration_gauss_hermite <- getFromNamespace("lav_integration_gauss_hermite", "lavaan")
   if(ndim == 1){
-    XW <- lavaan:::lav_integration_gauss_hermite(n    = ngq,
+    XW <- lav_integration_gauss_hermite(n    = ngq,
                                                  ndim = ndim)
   } else {
-    XW <- lavaan:::lav_integration_gauss_hermite(n    = ngq,
+    XW <- lav_integration_gauss_hermite(n    = ngq,
                                                  ndim = ndim,
                                                  dnorm = TRUE)
   }
@@ -90,9 +91,10 @@ llcont.glmerMod <- function(x){
       etamns <- re.modes[[1]][j,]
 
       x.star <- t(as.matrix(C %*% t(XW$x) + as.numeric(etamns)))
+      lav_mvnorm_dmvnorm <- getFromNamespace("lav_mvnorm_dmvnorm", "lavaan")
       w.star <- XW$w * (2*pi)^(ndim/2) * det(C) *
         exp(0.5 * apply(XW$x, 1, crossprod)) *
-        lavaan:::lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim),
+        lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim),
         Sigma = VarCov[[1]], log = FALSE)
 
       lik[j] <- sum(ly.prod(S = x.star,
@@ -148,22 +150,3 @@ ly.prod <- function(S, Y = NULL, fe.pred, Zi, re.modes, grp, fam) {
 }
 
 
-if(FALSE){
-  library("lme4")
-  source("llcont.glmerMod.R")
-
-  ## random intercept model
-  data(finance, package="smdata")
-
-  fit2 <- glmer(corr ~ jmeth + (1 | item), data=finance,
-               family=binomial, nAGQ = 20)
-  ll <- llcont.glmerMod(fit2)
-  c(sum(ll), logLik(fit2))
-
-  ## 3-dimensional, correlated random effects
-  fit2 <- glmer(corr ~ jmeth + (jmeth | item), data=finance,
-                family=binomial)
-  ll2 <- llcont.glmerMod(fit2)
-  c(sum(ll2), logLik(fit2))
-
-}

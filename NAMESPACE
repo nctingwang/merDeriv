@@ -3,7 +3,7 @@ importFrom("methods",
            "is", "new", "slot")
 
 importFrom("stats", 
-           "vcov", "aggregate")
+           "vcov", "aggregate", "dnorm", "glm", "nobs", "predict")
 
 importFrom("Matrix", 
            "forceSymmetric", "lu", "Diagonal")
@@ -16,16 +16,16 @@ importMethodsFrom("Matrix",
                   "chol")
 
 importFrom("utils", 
-           "combn")
+           "combn", "getFromNamespace")
 
 importFrom("sandwich",
            "estfun", "bread")
 
 importFrom("lme4", 
-            "getME", "vcov.merMod")
+            "getME", "vcov.merMod", "ranef", "VarCorr")
 
 importClassesFrom("lme4", 
-                   "lmerMod")
+                   "lmerMod", "glmerMod")
 
 importFrom("nonnest2", 
             "llcont")
@@ -38,7 +38,10 @@ S3method(estfun, lmerMod)
 S3method(vcov, lmerMod)
 S3method(bread, lmerMod)
 S3method(llcont, lmerMod)
+S3method(estfun, glmerMod)
 S3method(vcov, glmerMod)
+S3method(bread, glmerMod)
+S3method(llcont, glmerMod)
 
 
 ## export
@@ -46,4 +49,7 @@ export(estfun.lmerMod)
 export(vcov.lmerMod)
 export(bread.lmerMod)
 export(llcont.lmerMod)
+export(estfun.glmerMod)
 export(vcov.glmerMod)
+export(bread.glmerMod)
+export(llcont.glmerMod)
