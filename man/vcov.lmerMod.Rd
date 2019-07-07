@@ -37,10 +37,10 @@
 }
 \examples{
 \dontrun{
-    # The sleepstudy example
-    lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
+# The sleepstudy example
+lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
-    # variance covariance matrix for all parameters
-    vcov(lme4fit, full = TRUE)
+# variance covariance matrix for all parameters
+vcov(lme4fit, full = TRUE)
 }
 }

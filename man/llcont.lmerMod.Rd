@@ -28,10 +28,10 @@
 }
 \examples{
 \dontrun{
-    # The sleepstudy example
-    lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
+# The sleepstudy example
+lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
-    # clusterwise log likelihood
-    llcont(lme4fit)
+# clusterwise log likelihood
+llcont(lme4fit)
 }  
 }

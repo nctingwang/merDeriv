@@ -43,10 +43,10 @@
 }
 \examples{
 \dontrun{
-    # The sleepstudy example
-    lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
+# The sleepstudy example
+lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
-    # bread component for all parameters
-    bread(lme4fit, full = TRUE)
+# bread component for all parameters
+bread(lme4fit, full = TRUE)
 }
 }

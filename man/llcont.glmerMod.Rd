@@ -26,11 +26,11 @@
 }
 \examples{
 \dontrun{
-    # The cbpp example
-    lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
-      data = cbpp, family = binomial)
+# The cbpp example
+lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
+                 data = cbpp, family = binomial)
 
-    # clusterwise log likelihood
-    llcont(lme4fit)
+# clusterwise log likelihood
+llcont(lme4fit)
 }  
 }

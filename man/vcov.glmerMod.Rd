@@ -32,11 +32,11 @@
 }
 \examples{
 \dontrun{
-    # The cbpp example
-    lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
-      data = cbpp, family = binomial)
+# The cbpp example
+lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
+                 data = cbpp, family = binomial)
 
-    # variance covariance matrix for all parameters
-    vcov(lme4fit, full = TRUE)
+# variance covariance matrix for all parameters
+vcov(lme4fit, full = TRUE)
 }
 }

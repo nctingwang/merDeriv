@@ -29,14 +29,14 @@
 }
 \examples{
 \dontrun{
-    # The sleepstudy example
-    lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
+# The sleepstudy example
+lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
-    # casewise scores
-    estfun(lme4fit, level = 1)
+# casewise scores
+estfun(lme4fit, level = 1)
 
-    # clusterwise scores
-    estfun(lme4fit, level = 2)
+# clusterwise scores
+estfun(lme4fit, level = 2)
 }
 }
 

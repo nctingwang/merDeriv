@@ -38,11 +38,11 @@
 }
 \examples{
 \dontrun{
-    # The cbpp example
-    lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
-      data = cbpp, family = binomial)
+# The cbpp example
+lme4fit <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
+                 data = cbpp, family = binomial)
 
-    # bread component for all parameters
-    bread(lme4fit, full = TRUE)
+# bread component for all parameters
+bread(lme4fit, full = TRUE)
 }
 }
