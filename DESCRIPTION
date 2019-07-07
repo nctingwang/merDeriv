@@ -5,8 +5,11 @@ Authors@R: c(person(given = "Ting", family = "Wang",
                     role = c("aut", "cre"),
                     email = "twb8d@mail.missouri.edu"),
              person(given = "Edgar", family = "Merkle",
-                    role  = c("aut"),
-                    email = "merklee@missouri.edu")
+                    role  = "aut",
+                    email = "merklee@missouri.edu",
+                    comment = c(ORCID = "0000-0001-7158-0653")),
+	     person(given = "Yves", family = "Rosseel",
+	            role = "ctb")
             )
 Description: Compute case-wise and cluster-wise derivative for 
   mixed effects models with respect to fixed effects parameter, random effect (co)variances, 
