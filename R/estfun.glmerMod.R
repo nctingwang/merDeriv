@@ -1,9 +1,11 @@
 estfun.glmerMod <- function(x, ...){
-    if (!is(x, "glmerMod")) stop("estfun.glmerMod() only works for glmer() models.")
-    if (length(x@theta) > 1) warning ("scores may be not accurate due to the fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random effects")
   ## log-likelihood contributions of a glmer() model with
   ## one grouping variable (no crossed or nested random effects
-  ## allowed for now). Much code is taken from Yves.
+  ## allowed for now). Much code comes from Yves.
+  if (!is(x, "glmerMod")) stop("estfun.glmerMod() only works for glmer() models.")
+  ## check multiple groups.
+  if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
+  if (length(x@theta) > 1) warning ("scores may be not accurate due to the fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random effects")
     
   ## extract nAGQ used in model fit. 
   ngq <- x@devcomp$dims[7]  
