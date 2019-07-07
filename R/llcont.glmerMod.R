@@ -4,11 +4,16 @@ llcont.glmerMod <- function(x, ...){
   ## allowed for now). Much code is taken from Yves.
 
   if (!is(x, "glmerMod")) stop("llcont.glmerMod() only works for glmer() models.")
-  ## extract nAGQ used in model fit. 
-  ngq <- x@devcomp$dims[7]
-
   ## check multiple groups.
   if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
+
+  ## extract nAGQ used in model fit, unless overridden by ...
+  ddd <- list(...)
+  if ("nAGQ" %in% names(ddd)){
+    ngq <- ddd$nAGQ
+  } else {
+    ngq <- x@devcomp$dims[7]
+  }
     
   ## 1a. obtain random effect predictions + sds from predict()
   ##    these become etamns and etasds below, removing
