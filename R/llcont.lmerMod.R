@@ -1,6 +1,8 @@
 llcont.lmerMod <- function(x, ...) {
   if (!is(x, "lmerMod")) stop("llcont.lmerMod() only works for lmer() models.")
   if (x@devcomp$dims[10] != 0) stop("llcont.lmerMod() only works for ML estimation.")
+  if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")
+  if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification is currently not supported.")  
 
   dotdotdot <- list(...)
   if("level" %in% names(dotdotdot)){

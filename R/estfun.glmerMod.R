@@ -6,7 +6,9 @@ estfun.glmerMod <- function(x, ...){
   ## check multiple groups.
   if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
   if (length(x@theta) > 1) warning ("scores may be not accurate due to the fact that nAGQ = 1 is implemented in lme4 model estimation with multiple random effects")
-
+  if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")
+  if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification is currently not supported.")  
+    
   ## extract nAGQ used in model fit, unless overridden by ...
   ddd <- list(...)
   if ("nAGQ" %in% names(ddd)){
