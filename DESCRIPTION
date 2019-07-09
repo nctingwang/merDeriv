@@ -20,6 +20,4 @@ License: GPL (>= 2)
 LazyData: yes
 URL: http://semtools.r-forge.r-project.org
 NeedsCompilation: no
-Author: Ting Wang [aut, cre],
-        Edgar Merkle [aut]
 Maintainer: Ting Wang <twb8d@mail.missouri.edu>
