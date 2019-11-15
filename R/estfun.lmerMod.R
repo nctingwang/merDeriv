@@ -1,4 +1,4 @@
-estfun.lmerMod <- function(x, ...) {
+estfun.lmerMod <- function(x, ranpar = "var", ...) {
   if (!is(x, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
   if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")
   if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification is currently not supported.")
@@ -70,13 +70,25 @@ estfun.lmerMod <- function(x, ...) {
   }
 
   ## REML estimates
-   if (x@devcomp$dims[10] == 2|x@devcomp$dims[10] == 1) {
+  if (x@devcomp$dims[10] == 2|x@devcomp$dims[10] == 1) {
     for (j in 1:length(devV)) {
       score_varcov[,j] <- as.vector(-(1/2) * diag(crossprod(P, devV[[j]])) +
       t((1/2) * tcrossprod(tcrossprod(yXbesoV, t(devV[[j]])), invV)) *
       (yXbe))
     }
   }
+
+  ## re-parameterization for sd/cor
+  if (ranpar == "var"){
+    score_varcov <- score_varcov 
+  } else {
+      if (ranpar == "sd"){
+      score_varcov <- score_varcov %*% (2 * parts$sigma^2 * parts$Lambda) 
+      } else {
+      stop("ranpar needs to be var or sd.")
+    }
+  }
+  
   
   ## Organize score matrix
   score <- cbind(as.matrix(score_beta), score_varcov)
