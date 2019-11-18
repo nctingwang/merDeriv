@@ -1,4 +1,4 @@
-vcov.lmerMod <- function(object, ...) {
+vcov.lmerMod <- function(object, ranpar = "var", ...) {
   
   if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
   
@@ -109,11 +109,19 @@ vcov.lmerMod <- function(object, ...) {
       }
     }
     ## Organize full_varcov
+    ## reprameterize sd and var
+    if (ranpar == "var") {
+        ranhes <- ranhes
+    } else {
+       if (ranpar == "sd") {
+        ranhes <- 0.5 * parts$Lambda * ranhes
+       }
+    }
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),
                                cbind(varcov_beta, ranhes)))
     
     colnames(full_varcov) <- c(names(parts$fixef), paste("cov",
-                             names(parts$theta), sep="_"), "residual")
+                             names(parts$theta), sep = "_"), "residual")
     
     callingFun <- try(deparse(sys.call(-2)), silent = TRUE)
     if(length(callingFun) > 1) callingFun <- paste(callingFun, collapse="")
