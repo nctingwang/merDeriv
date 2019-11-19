@@ -1,4 +1,4 @@
-vcov.glmerMod <- function(object, ...) {
+vcov.glmerMod <- function(object, ranpar = "var", ...) {
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full
@@ -27,7 +27,16 @@ vcov.glmerMod <- function(object, ...) {
     full_vcov[(pfix + 1):p, (pfix + 1): p] <- full_vcov_noorder[1:pran, 1:pran]
     full_vcov[(pfix + 1):p, 1:pfix] <- full_vcov_noorder[1:pran, (pran + 1): p]
     full_vcov[1:pfix, (pfix + 1): p] <- full_vcov_noorder[(pran + 1): p, 1:pran]
-    
+
+    ## reparameterize for sd and var for random variance/covariance parameters.
+    if (ranpar == "sd") {
+       full_vcov <- full_vcov
+    } else {
+        if (ranpar == "var") {
+          full_vcov <- Diagonal(sqrt(diag(full_vcov)) 
+      }
+    }
+
     ## name the matrix
     parts <- getME(object, c("fixef", "theta"))
     colnames(full_vcov) <- c(names(parts$fixef), paste("cov",

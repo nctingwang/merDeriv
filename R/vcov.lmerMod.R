@@ -114,7 +114,7 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
         ranhes <- ranhes
     } else {
        if (ranpar == "sd") {
-        ranhes <- 0.5 * parts$Lambda * ranhes
+        ranhes <- 0.5 * solve(sqrt(parts$Lambda)) %*% ranhes
        }
     }
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),

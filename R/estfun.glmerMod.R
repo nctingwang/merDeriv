@@ -1,4 +1,4 @@
-estfun.glmerMod <- function(x, ...){
+estfun.glmerMod <- function(x, ranpar = "var",...){
   ## log-likelihood contributions of a glmer() model with
   ## one grouping variable (no crossed or nested random effects
   ## allowed for now). Much code comes from Yves.
@@ -106,8 +106,17 @@ estfun.glmerMod <- function(x, ...){
                   devLambda = devLambda, Lambda = parts$Lambda,
                   iLambda = iLambda,
                   formula = x@call$formula, frame = x@frame)) %*% w.star)
+      if (ranpar == "sd"){
+          score[j,] <- out[j,-1]/out[j,1]
+      } else {
+          if (ranpar == "var"){
+              score[j,] <- c(out[j,2:(ncol(X) + 1)]/out[j,1],
+                (2 * parts$Lambda) %*% out[j,(ncol(X) + 2)]/out[j,1])
+          } else{
+          stop("ranpar needs to be sd or var.")
+        }
+      }
 
-      score[j,] <- out[j,-1]/out[j,1]
     } else {
       ## from integration3_cfa.R (multivariate version)
       ## FIXME: if >1 grouping var, length(re.vars) > 1
@@ -130,7 +139,16 @@ estfun.glmerMod <- function(x, ...){
                                iLambda = iLambda,
                                formula = x@call$formula, frame = x@frame)) %*% w.star)
 
-      score[j,] <- out[j,-1]/out[j,1]
+      if (ranpar == "sd"){
+          score[j,] <- out[j,-1]/out[j,1]
+      } else {
+          if (ranpar == "var"){
+              score[j,] <-  c(out[j,2:(ncol(X) + 1)]/out[j,1],
+                (2 * parts$Lambda) %*% out[j,(ncol(X) + 2)]/out[j,1])
+          } else {
+          stop("ranpar needs to be sd or var.")
+      }
+     }
     }
   }
 
