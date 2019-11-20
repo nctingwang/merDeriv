@@ -31,11 +31,19 @@ vcov.glmerMod <- function(object, ranpar = "var", ...) {
     ## reparameterize for sd and var for random variance/covariance parameters.
     if (ranpar == "sd") {
        full_vcov <- full_vcov
-    } else {
-        if (ranpar == "var") {
-          full_vcov <- Diagonal(sqrt(diag(full_vcov)) 
-      }
+    } else if (ranpar == "var") {
+          full_hessian <- -solve(full_vcov)
+          full_hessian[1:pfix, 1:pfix] <- full_hessian[1:pfix, 1:pfix]
+          full_hessian[(pfix + 1):p, (pfix + 1): p] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
+              full_hessian[(pfix + 1):p, (pfix + 1): p]
+          full_hessian[(pfix + 1):p, 1:pfix] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
+              full_hessian[(pfix + 1):p, 1:pfix]
+          full_vcov[1:pfix, (pfix + 1): p] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
+              full_hessian[1:pfix, (pfix + 1): p]
+        } else {
+        stop("ranpar needs to be sd or var")
     }
+    } 
 
     ## name the matrix
     parts <- getME(object, c("fixef", "theta"))
