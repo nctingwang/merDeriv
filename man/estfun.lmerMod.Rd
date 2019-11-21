@@ -8,10 +8,13 @@
   scores, evaluated at the ML estimates.
 }
 \usage{
-\method{estfun}{lmerMod}(x, \dots)
+\method{estfun}{lmerMod}(x, ranpar, \dots)
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item(ranpar){specify parameterization of random part, either
+    \value{"var"}, variance/covariance or \value{"sd"}, standard deviation and
+    correlation.}
   \item{\dots}{additional arguments, including \code{level}
     (\code{level = 2} is default; see details).}
 }

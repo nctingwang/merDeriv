@@ -8,10 +8,13 @@
   scores, evaluated at the ML estimates.
 }
 \usage{
-\method{estfun}{glmerMod}(x, \dots)
+\method{estfun}{glmerMod}(x, ranpar, \dots)
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
+  \item(ranpar){specify parameterization of random part, either
+    \value{"var"}, variance/covariance or \value{"sd"}, standard deviation and
+    correlation.}
   \item{\dots}{Additional arguments.}
 }
 \value{A \emph{g} by \emph{p} score matrix, corresponding to 

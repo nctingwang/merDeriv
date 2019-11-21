@@ -112,10 +112,13 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
     ## reprameterize sd and var
     if (ranpar == "var") {
         ranhes <- ranhes
-    } else {
-       if (ranpar == "sd") {
-        ranhes <- 0.5 * solve(sqrt(parts$Lambda)) %*% ranhes
-       }
+    } else if (ranpar == "sd") {
+        sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
+        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+        sdcormat$sdcor[which(!is.na(sdcormat$var2))]
+        score_varcov <- sweep(score_varcov, MARGIN = 2, sdcormat$sdcor, `*`)
+      }
     }
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),
                                cbind(varcov_beta, ranhes)))

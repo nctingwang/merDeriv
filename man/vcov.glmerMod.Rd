@@ -7,10 +7,13 @@
   mixed effects model of class \code{\linkS4class{glmerMod}}.  
 }
 \usage{
-\method{vcov}{glmerMod}(object, \dots)
+\method{vcov}{glmerMod}(object, ranpar, \dots)
 }
 \arguments{
   \item{object}{An object of class \code{\linkS4class{glmerMod}}.}
+  \item(ranpar){specify parameterization of random part, either
+    \value{"var"}, variance/covariance or \value{"sd}", standard deviation and
+    correlation.}
   \item{\dots}{additional arguments, including \code{full} 
   (\code{full = FALSE} is default; see details).}
 }

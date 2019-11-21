@@ -7,10 +7,13 @@
   mixed effects model of class \code{\linkS4class{lmerMod}}.  
 }
 \usage{
-\method{vcov}{lmerMod}(object, \dots)
+\method{vcov}{lmerMod}(object, ranpar, \dots)
 }
 \arguments{
   \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item(ranpar){specify parameterization of random part, either
+    \value{"var"}, variance/covariance or \value{"sd"}, standard deviation and
+    correlation.}
   \item{\dots}{additional arguments, including \code{full} 
   and \code{information} (\code{full = FALSE} 
   and \code{information = "expected"} 
