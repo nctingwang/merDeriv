@@ -119,7 +119,7 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
         sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
         sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
           sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        varcov_beta <- sweep(varcov_beta, MARGIN = 1, sdcormat$sdcor, `*`)
+        varcov_beta <- sweep(varcov_beta, MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
         weight <- apply(entries, 1, function(x) sdcormat$sdcor[x[1]] * sdcormat$sdcor[x[2]])
         ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)]  

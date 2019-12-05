@@ -110,8 +110,13 @@ estfun.glmerMod <- function(x, ranpar = "var",...){
           score[j,] <- out[j,-1]/out[j,1]
       } else {
           if (ranpar == "var"){
-              score[j,] <- c(out[j,2:(ncol(X) + 1)]/out[j,1],
-                (2 * parts$Lambda) %*% out[j,(ncol(X) + 2)]/out[j,1])
+            sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+            sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- (1/2) * sdcormat$sdcor[which(is.na(sdcormat$var2))]^(-1/2)
+            sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- (-1) * (sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+                                                                       sdcormat$sdcor[which(!is.na(sdcormat$var2))])^(-2)
+            out[j,(ncol(X) + 1)] <- out[j,(ncol(X) + 1)] * sdcormat$sdcor2
+            
+            score[j,] <- out[j,-1]/out[j,1]
           } else{
           stop("ranpar needs to be sd or var.")
         }
@@ -143,8 +148,13 @@ estfun.glmerMod <- function(x, ranpar = "var",...){
           score[j,] <- out[j,-1]/out[j,1]
       } else {
           if (ranpar == "var"){
-              score[j,] <-  c(out[j,2:(ncol(X) + 1)]/out[j,1],
-                (2 * parts$Lambda) %*% out[j,(ncol(X) + 2)]/out[j,1])
+            sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+            sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- (1/2) * sdcormat$sdcor[which(is.na(sdcormat$var2))]^(-1/2)
+            sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- (-1) * (sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+              sdcormat$sdcor[which(!is.na(sdcormat$var2))])^(-2)
+            out[j,(ncol(X) + 1)] <- out[j,(ncol(X) + 1)] * sdcormat$sdcor2
+            
+            score[j,] <- out[j,-1]/out[j,1]
           } else {
           stop("ranpar needs to be sd or var.")
       }
