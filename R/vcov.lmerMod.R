@@ -124,7 +124,7 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
         weight <- apply(entries, 1, function(x) sdcormat$sdcor[x[1]] * sdcormat$sdcor[x[2]])
         ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)]  
       } else{
-        stop("ranpar needs to be var or sd.")
+        stop("ranpar needs to be var or sd for lmerMod object.")
     }
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),
                                cbind(varcov_beta, ranhes)))

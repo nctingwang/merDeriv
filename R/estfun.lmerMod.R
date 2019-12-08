@@ -88,7 +88,7 @@ estfun.lmerMod <- function(x, ranpar = "var", ...) {
         sdcormat$sdcor[which(!is.na(sdcormat$var2))]
       score_varcov <- sweep(score_varcov, MARGIN = 2, sdcormat$sdcor2, `*`)
     } else {
-        stop("ranpar needs to be var or sd.")
+        stop("ranpar needs to be var or sd for lmerMod object.")
   }
   
   
