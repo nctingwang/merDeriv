@@ -27,21 +27,24 @@ vcov.glmerMod <- function(object, ranpar = "var", ...) {
     full_vcov[(pfix + 1):p, (pfix + 1): p] <- full_vcov_noorder[1:pran, 1:pran]
     full_vcov[(pfix + 1):p, 1:pfix] <- full_vcov_noorder[1:pran, (pran + 1): p]
     full_vcov[1:pfix, (pfix + 1): p] <- full_vcov_noorder[(pran + 1): p, 1:pran]
+    
 
     ## reparameterize for sd and var for random variance/covariance parameters.
-    if (ranpar == "sd") {
+    if (pran ==1 & (ranpar == "sd"|ranpar == "theta")) {
        full_vcov <- full_vcov
     } else if (ranpar == "var") {
-          full_hessian <- -solve(full_vcov)
-          full_hessian[1:pfix, 1:pfix] <- full_hessian[1:pfix, 1:pfix]
-          full_hessian[(pfix + 1):p, (pfix + 1): p] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
-              full_hessian[(pfix + 1):p, (pfix + 1): p]
-          full_hessian[(pfix + 1):p, 1:pfix] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
-              full_hessian[(pfix + 1):p, 1:pfix]
-          full_vcov[1:pfix, (pfix + 1): p] <- 0.5 %*% solve(sqrt(parts$Lambda)) %*%
-              full_hessian[1:pfix, (pfix + 1): p]
+      library("numDeriv")
+      useSc <- attr(x,"useSc")
+      dd <- lme4:::devfun2(object,useSc=TRUE,signames=FALSE, transfuns = 
+                             list(from.chol = Cv_to_Sv,
+                              to.sd = identity))
+      vdd <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
+      ranpars <- vdd[,"sdcor"]
+      pars <- c(ranpars,object@beta)
+      hh1 <- hessian(dd,pars)
+      vv2 <- -2*solve(hh1)
         } else {
-        stop("ranpar needs to be sd or var")
+        stop("ranpar needs to be theta, sd or var")
     }
     } 
 
