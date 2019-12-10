@@ -30,23 +30,25 @@ vcov.glmerMod <- function(object, ranpar = "var", ...) {
     
 
     ## reparameterize for sd and var for random variance/covariance parameters.
-    if (pran ==1 & (ranpar == "sd"|ranpar == "theta")) {
+    if (pran == 1) {
+      if (ranpar == "sd"|ranpar == "theta") {
        full_vcov <- full_vcov
-    } else if (ranpar == "var") {
-      library("numDeriv")
-      useSc <- attr(x,"useSc")
-      dd <- lme4:::devfun2(object,useSc=TRUE,signames=FALSE, transfuns = 
-                             list(from.chol = Cv_to_Sv,
-                              to.sd = identity))
-      vdd <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
-      ranpars <- vdd[,"sdcor"]
-      pars <- c(ranpars,object@beta)
-      hh1 <- hessian(dd,pars)
-      vv2 <- -2*solve(hh1)
+      } else if (ranpar == "var") {
+        full_vcov[1:pfix, 1:pfix] <- full_vcov[1:pfix, 1:pfix]
+        full_vcov[(pfix + 1):p, (pfix + 1): p] <- ((1/2)*(object@theta)^(-1/2))* 
+          full_vcov[(pfix + 1):p, (pfix + 1): p] 
+        full_vcov[(pfix + 1):p, 1:pfix] <- ((1/2)*(object@theta)^(-1/2))* 
+          full_vcov[(pfix + 1):p, 1:pfix] 
+        full_vcov[1:pfix, (pfix + 1): p] <- ((1/2)*(object@theta)^(-1/2))* 
+          full_vcov[(pfix + 1):p, 1:pfix]
         } else {
-        stop("ranpar needs to be theta, sd or var")
+           stop("ranpar needs to be theta, sd or var")
+        } 
+    } else if (pran != 1){
+           warning("For glmerMod with multi-dimensional random effects, the variance matrix
+             is parameterized wrt Cholesky Decomposition parameter.")
     }
-    } 
+      
 
     ## name the matrix
     parts <- getME(object, c("fixef", "theta"))
