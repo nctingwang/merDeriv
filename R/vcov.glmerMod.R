@@ -40,19 +40,21 @@ vcov.glmerMod <- function(object, ranpar = "var", ...) {
         hh <- lme4:::hessian(dd, pars)/(-2)
         
       if (ranpar == "var"){
-        sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+        sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
         sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
         sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
           sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        hh[1:pran, (pran + 1):p] <- sweep(hh[1:pran, (pran + 1):p], 
+        hh[(pfix + 1):p, (pfix + 1): p] <- sweep(as.matrix(hh[(pfix + 1):p, (pfix + 1): p]), 
+                                                 MARGIN = 1, sdcormat$sdcor2, `*`)
+        hh[(pran + 1): p, 1:pran] <- sweep(as.matrix(hh[(pran + 1): p, 1:pran]), 
                                                  MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
-        entries <- rbind(matrix(rep(1: (pran + 1), each = 2),
-                                (pran + 1), 2, byrow = TRUE), 
-                         t(combn((pran + 1), 2)))
+        entries <- rbind(matrix(rep(1: pran, each = 2),
+                                pran, 2, byrow = TRUE), 
+                         t(combn(pran, 2)))
         entries <- entries[order(entries[,1], entries[,2]), ]
         weight <- apply(entries, 1, function(x) sdcormat$sdcor[x[1]] * sdcormat$sdcor[x[2]])
-        hh[(pfix + 1):p, (pfix + 1): p][lower.tri(hh[1:pran, 1:pran], 
+        hh[1:pran, 1:pran][lower.tri(hh[1:pran, 1:pran], 
                           diag = TRUE)] <- weight * hh[1:pran, 1:pran][lower.tri(hh[1:pran, 1:pran], diag = TRUE)]  
       }
         full_vcov_noorder <- -solve(hh)
