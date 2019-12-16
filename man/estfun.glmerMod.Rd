@@ -8,19 +8,21 @@
   scores, evaluated at the ML estimates.
 }
 \usage{
-\method{estfun}{glmerMod}(x, ranpar, \dots)
+\method{estfun}{glmerMod}(x, \dots)
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
-  \item(ranpar){specify parameterization of random part, either
-    \value{"var"}, variance/covariance or \value{"sd"}, standard deviation and
-    correlation.}
-  \item{\dots}{Additional arguments.}
+  \item{\dots}{Additional arguments, including \code{ranpar}
+    (\code{ranpar = "var"} is default; see details)}.
 }
 \value{A \emph{g} by \emph{p} score matrix, corresponding to 
   \emph{g} clusters and \emph{p} parameters. 
   For models with multiple clustering variables (three-level models, 
   crossed random effects), an error is thrown.
+  If \code{ranpar = "var"}, the random effects are parameterized as 
+  variance/covariance; If \code{ranpar = "sd"}, the random effects are 
+  parameterized as standard deviation/correlation; If \code{ranpar = "theta"}, 
+  the random effects are parameterized as components of Cholesky decompostion. 
 }
 \references{
   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 

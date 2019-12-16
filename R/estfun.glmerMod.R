@@ -1,4 +1,4 @@
-estfun.glmerMod <- function(x, ranpar = "var",...){
+estfun.glmerMod <- function(x,...){
   ## log-likelihood contributions of a glmer() model with
   ## one grouping variable (no crossed or nested random effects
   ## allowed for now). Much code comes from Yves.
@@ -16,6 +16,12 @@ estfun.glmerMod <- function(x, ranpar = "var",...){
   } else {
     ngq <- x@devcomp$dims[7]
   }
+  
+  if("ranpar" %in% names(ddd)){
+    ranpar <- ddd$ranpar
+  } else {
+    ranpar <- "var"
+  }  
   
   ## 1a. obtain random effect predictions + sds from predict()
   ##    these become etamns and etasds below, removing
@@ -153,7 +159,6 @@ estfun.glmerMod <- function(x, ranpar = "var",...){
   } else {
     if (ranpar == "var") {
     ## create weight matrix
-    require(matrixcalc)
     d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
       (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
     L <- elimination.matrix(ndim)
@@ -163,7 +168,6 @@ estfun.glmerMod <- function(x, ranpar = "var",...){
     score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
     } else {
       if (ranpar == "sd"){
-        require(matrixcalc)
         d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
           (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
         L <- elimination.matrix(ndim)

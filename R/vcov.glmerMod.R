@@ -1,10 +1,16 @@
-vcov.glmerMod <- function(object, ranpar = "var", ...) {
+vcov.glmerMod <- function(object, ...) {
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full
   } else {
     full <- FALSE
   }
+
+  if("ranpar" %in% names(dotdotdot)){
+    ranpar <- dotdotdot$ranpar
+  } else {
+    ranpar <- "var"
+  }  
   
   if (full == FALSE) {
     full_vcov <- vcov.merMod(object)
@@ -33,11 +39,11 @@ vcov.glmerMod <- function(object, ranpar = "var", ...) {
     if (ranpar == "theta") {
        full_vcov <- full_vcov
       } else if (ranpar == "sd"| ranpar == "var") {
-        dd <- lme4:::devfun2(object,useSc=FALSE,signames=FALSE)
+        dd <- devfun2(object,useSc=FALSE,signames=FALSE)
         nvp <- length(attr(dd,"thopt"))
         pars <- attr(dd,"optimum")
         pars <- pars[!is.na(names(pars))] 
-        hh <- lme4:::hessian(dd, pars)/(-2)
+        hh <- hessian(dd, pars)/(-2)
         
       if (ranpar == "var"){
         sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")

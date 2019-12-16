@@ -22,7 +22,7 @@ importFrom("sandwich",
            "estfun", "bread")
 
 importFrom("lme4", 
-            "getME", "vcov.merMod", "ranef", "VarCorr")
+            "getME", "vcov.merMod", "ranef", "VarCorr", "devfun2")
 
 importClassesFrom("lme4", 
                    "lmerMod", "glmerMod")
@@ -31,7 +31,13 @@ importFrom("nonnest2",
             "llcont")
 
 importFrom("lavaan", 
-            "lav_matrix_trace")
+           "lav_matrix_trace")
+
+importFrom("matrixcalc", 
+           "elimination.matrix", "commutation.matrix")
+
+importFrom("numDeriv",
+           "hessian")
 
 ## S3method
 S3method(estfun, lmerMod)

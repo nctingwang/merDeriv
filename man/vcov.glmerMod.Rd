@@ -7,15 +7,12 @@
   mixed effects model of class \code{\linkS4class{glmerMod}}.  
 }
 \usage{
-\method{vcov}{glmerMod}(object, ranpar, \dots)
+\method{vcov}{glmerMod}(object, \dots)
 }
 \arguments{
   \item{object}{An object of class \code{\linkS4class{glmerMod}}.}
-  \item(ranpar){specify parameterization of random part, either
-    \value{"var"}, variance/covariance or \value{"sd}", standard deviation and
-    correlation.}
-  \item{\dots}{additional arguments, including \code{full} 
-  (\code{full = FALSE} is default; see details).}
+  \item{\dots}{additional arguments, including \code{full} and \code{ranpar}
+  (\code{full = FALSE} and \code{ranpar = "var"} default; see details).}
 }
 \value{
   A \emph{p} by \emph{p} variance-covariance matrix, where \emph{p}
@@ -26,7 +23,10 @@
   for all fitted parameters (including fixed effect parameters and random 
   effect (co)variances). The variance-covariance matrix
   is based on the negative of Hessian matrix, which is extracted from 
-  \code{lme4}. 
+  \code{lme4}.  If \code{ranpar = "var"}, the random effects are parameterized as 
+  variance/covariance; If \code{ranpar = "sd"}, the random effects are 
+  parameterized as standard deviation/correlation; If \code{ranpar = "theta"}, 
+  the random effects are parameterized as components of Cholesky decompostion. 
 }
 \references{
   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 

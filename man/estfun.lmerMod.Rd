@@ -8,22 +8,22 @@
   scores, evaluated at the ML estimates.
 }
 \usage{
-\method{estfun}{lmerMod}(x, ranpar, \dots)
+\method{estfun}{lmerMod}(x, \dots)
 }
 \arguments{
   \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
-  \item(ranpar){specify parameterization of random part, either
-    \value{"var"}, variance/covariance or \value{"sd"}, standard deviation and
-    correlation.}
-  \item{\dots}{additional arguments, including \code{level}
-    (\code{level = 2} is default; see details).}
+  \item{\dots}{additional arguments, including \code{level} and \code{ranpar}
+    (\code{level = 2} and \code{ranpar = "var"} are default; see details).}
 }
 \value{If \code{level = 2}, a \emph{g} by \emph{p} score matrix, corresponding to 
   \emph{g} clusters and \emph{p} parameters. If \code{level = 1}, a \emph{n} by 
   \emph{p} score matrix, corresponding to 
   \emph{n} observations and \emph{p} parameters. 
   For models with multiple clustering variables (three-level models, 
-  crossed random effects), an error is thrown if \code{level = 2}.
+  crossed random effects), an error is thrown if \code{level = 2}.    
+  If \code{ranpar = "var"}, the random effects are parameterized as 
+  variance/covariance; If \code{ranpar = "sd"}, the random effects are 
+  parameterized as standard deviation/correlation.  
 }
 \references{
   Wang, T. & Merkle, E. C. (2018). Derivative Computations and Robust Standard

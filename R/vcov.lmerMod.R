@@ -1,4 +1,4 @@
-vcov.lmerMod <- function(object, ranpar = "var", ...) {
+vcov.lmerMod <- function(object, ...) {
   
   if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
   
@@ -15,7 +15,13 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
   }
   if(!(full %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
   if(!(information %in% c("expected", "observed"))) stop("invalid 'information' argument supplied")
-  
+
+  if("ranpar" %in% names(dotdotdot)){
+    ranpar <- dotdotdot$ranpar
+  } else {
+    ranpar <- "var"
+  }  
+
   ## preparation for short cuts:
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(object, "ALL")
@@ -115,7 +121,7 @@ vcov.lmerMod <- function(object, ranpar = "var", ...) {
         varcov_beta <- varcov_beta
     } else if (ranpar == "sd") {
         ## varcov_beta reparameterization
-        sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+        sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
         sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
         sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
           sdcormat$sdcor[which(!is.na(sdcormat$var2))]
