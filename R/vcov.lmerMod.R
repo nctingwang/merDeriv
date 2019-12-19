@@ -128,8 +128,7 @@ vcov.lmerMod <- function(object, ...) {
         varcov_beta <- sweep(varcov_beta, MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
         weight <- apply(entries, 1, function(x) sdcormat$sdcor2[x[1]] * sdcormat$sdcor2[x[2]])
-        ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)] +
-            estfun.lmerMod(object)[,c()]
+        ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)]
       } else {
         stop("ranpar needs to be var or sd for lmerMod object.")
     }
