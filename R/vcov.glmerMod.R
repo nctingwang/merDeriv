@@ -39,7 +39,7 @@ vcov.glmerMod <- function(object, ...) {
     if (ranpar == "theta") {
        full_vcov <- full_vcov
       } else if (ranpar == "sd"| ranpar == "var") {
-        dd <- devfun2(object,useSc=FALSE,signames=FALSE)
+        dd <- devfun2(object,useSc=FALSE,signames=TRUE)
         nvp <- length(attr(dd,"thopt"))
         pars <- attr(dd,"optimum")
         pars <- pars[!is.na(names(pars))] 
@@ -47,21 +47,27 @@ vcov.glmerMod <- function(object, ...) {
         
       if (ranpar == "var"){
         sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
-        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
-        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
-          sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        hh[(pfix + 1):p, (pfix + 1): p] <- sweep(as.matrix(hh[(pfix + 1):p, (pfix + 1): p]), 
+        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- (1/2)*(sdcormat$sdcor[which(is.na(sdcormat$var2))])^(-1/2)
+        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- (-1)*(sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+          sdcormat$sdcor[which(!is.na(sdcormat$var2))])^(-1)
+        hh[((pran + 1):p), (1:pran)] <- sweep(as.matrix(hh[((pran + 1):p), (1:pran)]), 
                                                  MARGIN = 1, sdcormat$sdcor2, `*`)
-        hh[(pran + 1): p, 1:pran] <- sweep(as.matrix(hh[(pran + 1): p, 1:pran]), 
+        hh[(1:pran), ((pran + 1):p)] <- sweep(as.matrix(hh[(1:pran), ((pran + 1):p)]), 
                                                  MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
-        entries <- rbind(matrix(rep(1: pran, each = 2),
+        if (pran == 1){
+            entries = matrix(1, 1, 1)
+            weight <- (sdcormat$sdcor2)^2
+        } else {
+          entries <- rbind(matrix(rep(1: pran, each = 2),
                                 pran, 2, byrow = TRUE), 
                          t(combn(pran, 2)))
-        entries <- entries[order(entries[,1], entries[,2]), ]
-        weight <- apply(entries, 1, function(x) sdcormat$sdcor[x[1]] * sdcormat$sdcor[x[2]])
+          entries <- entries[order(entries[,1], entries[,2]), ]
+          weight <- apply(entries, 1, function(x) sdcormat$sdcor2[x[1]] * sdcormat$sdcor2[x[2]])
+        }
         hh[1:pran, 1:pran][lower.tri(hh[1:pran, 1:pran], 
-                          diag = TRUE)] <- weight * hh[1:pran, 1:pran][lower.tri(hh[1:pran, 1:pran], diag = TRUE)]  
+                                     diag = TRUE)] <- weight * hh[1:pran, 1:pran][lower.tri(hh[1:pran, 1:pran], diag = TRUE)]
+
       }
         full_vcov_noorder <- -solve(hh)
         full_vcov <- matrix(NA, nrow(full_vcov_noorder), ncol(full_vcov_noorder))

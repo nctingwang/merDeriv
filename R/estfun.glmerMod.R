@@ -112,24 +112,26 @@ estfun.glmerMod <- function(x,...){
                   devLambda = devLambda, Lambda = parts$Lambda,
                   iLambda = iLambda,
                   formula = x@call$formula, frame = x@frame)) %*% w.star)
-      if ((ranpar == "sd")| (ranpar == "theta")){
+      if ((ranpar == "sd") | (ranpar == "theta")) {
           score[j,] <- out[j,-1]/out[j,1]
-      } else {
-          if (ranpar == "var"){
+      }
+
+      if (ranpar == "var") {
             ## get variance and sd 
             sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
             ## chain rule
             sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- (1/2) * 
               sdcormat$sdcor[which(is.na(sdcormat$var2))]^(-1/2)
-            out[j,(ncol(X) + 1)] <- out[j,(ncol(X) + 1)] * sdcormat$sdcor2
+            out[j,(ncol(X) + 2)] <- out[j,(ncol(X) + 2)] * sdcormat$sdcor2
             
             score[j,] <- out[j,-1]/out[j,1]
-          } else{
-          stop("ranpar needs to be sd, theta or var for glmerMod object.")
         }
-      }
-
-    } else {
+      
+       if (!(ranpar %in% c("sd", "theta", "var"))) {
+          stop("ranpar needs to be sd, theta or var for glmerMod object.")
+       }
+    }
+      if (ndim != 1) {
       ## from integration3_cfa.R (multivariate version)
       ## FIXME: if >1 grouping var, length(re.vars) > 1
       C <- t(chol(re.vars[[1]][,,j]))
@@ -151,36 +153,37 @@ estfun.glmerMod <- function(x,...){
                                iLambda = iLambda,
                                formula = x@call$formula, frame = x@frame)) %*% w.star)
 
-          score[j,] <- out[j,-1]/out[j,1]
-    }
-  }
-  if (ranpar=="theta"){
-    score <- score
-  } else {
-    if (ranpar == "var") {
-    ## create weight matrix
-    d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
-      (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
-    L <- elimination.matrix(ndim)
-    d1 <- L %*% d0 %*% t(L)
-    dfin <- solve(d1)
-    
-    score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
-    } else {
-      if (ranpar == "sd"){
+        score[j,] <- out[j,-1]/out[j,1]
+      if (ranpar=="theta"){
+         score <- score
+      }
+      if (ranpar == "var") {
+        ## create weight matrix
         d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
           (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
         L <- elimination.matrix(ndim)
         d1 <- L %*% d0 %*% t(L)
         dfin <- solve(d1)
+    
+        score[, ((ncol(X)+2):ncol(score))] <- as.matrix(score[, ((ncol(X)+2):ncol(score))] %*% dfin)
+      }
+      if (ranpar == "sd"){
+        d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
+           (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
+        L <- elimination.matrix(ndim)
+        d1 <- L %*% d0 %*% t(L)
+        dfin <- solve(d1)
         
-        score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
+        score[, ((ncol(X)+2):ncol(score))] <- as.matrix(score[, ((ncol(X)+2):ncol(score))] %*% dfin)
         ## parameterize to sd and corr
         sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
         sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
         sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
-          sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        score[, ((ncol(X)+1):ncol(score))] <- sweep(score[, ((ncol(X)+1):ncol(score))], MARGIN = 2, sdcormat$sdcor2, `*`)
+        sdcormat$sdcor[which(!is.na(sdcormat$var2))]
+        score[, ((ncol(X)+2):ncol(score))] <- sweep(score[, ((ncol(X)+2):ncol(score))], MARGIN = 2, sdcormat$sdcor2, `*`)
+      }
+      if (!(ranpar %in% c("sd", "theta", "var"))){
+          stop("ranpar needs to be sd, theta or var for glmerMod object.")
       }
     }
   }
