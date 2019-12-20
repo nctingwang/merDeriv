@@ -75,13 +75,13 @@ vcov.lmerMod <- function(object, ...) {
                 devV[[x[1]]]), invV), t(devV[[x[2]]])))))
       }
       if(information == "observed") {
-        ranhes[lower.tri(ranhes, diag = TRUE)] <- apply(entries, 1, 
-          function(x) -as.numeric((1/2) *
+        ranhes[lower.tri(ranhes, diag = TRUE)] <- unlist(apply(entries, 1, 
+          function(x) as.vector(-as.numeric((1/2) *
           lav_matrix_trace(tcrossprod(tcrossprod(crossprod(invV,
           devV[[x[1]]]), invV), t(devV[[x[2]]])))) +
           tcrossprod((tcrossprod((crossprod(yXbe,
           tcrossprod(tcrossprod(crossprod(invV,
-          devV[[x[1]]]), invV), t(devV[[x[2]]])))), invV)), t(yXbe)))
+          devV[[x[1]]]), invV), t(devV[[x[2]]])))), invV)), t(yXbe)))))
       }      
     }
     ## REML estimates
@@ -129,6 +129,7 @@ vcov.lmerMod <- function(object, ...) {
         ## ranhes reparameterization
         weight <- apply(entries, 1, function(x) sdcormat$sdcor2[x[1]] * sdcormat$sdcor2[x[2]])
         ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)]
+        ranhes <- forceSymmetric(ranhes, uplo = "L")
       } else {
         stop("ranpar needs to be var or sd for lmerMod object.")
     }
