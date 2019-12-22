@@ -131,7 +131,10 @@ estfun.glmerMod <- function(x,...){
           stop("ranpar needs to be sd, theta or var for glmerMod object.")
        }
     }
-      if (ndim != 1) {
+  }
+  
+  if (ndim != 1) {
+    for (j in 1:J){
       ## from integration3_cfa.R (multivariate version)
       ## FIXME: if >1 grouping var, length(re.vars) > 1
       C <- t(chol(re.vars[[1]][,,j]))
@@ -154,9 +157,13 @@ estfun.glmerMod <- function(x,...){
                                formula = x@call$formula, frame = x@frame)) %*% w.star)
 
         score[j,] <- out[j,-1]/out[j,1]
+      }
+    }
       if (ranpar=="theta"){
          score <- score
       }
+  
+    
       if (ranpar == "var") {
         ## create weight matrix
         d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
@@ -165,7 +172,7 @@ estfun.glmerMod <- function(x,...){
         d1 <- L %*% d0 %*% t(L)
         dfin <- solve(d1)
     
-        score[, ((ncol(X)+2):ncol(score))] <- as.matrix(score[, ((ncol(X)+2):ncol(score))] %*% dfin)
+        score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
       }
       if (ranpar == "sd"){
         d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
@@ -174,19 +181,17 @@ estfun.glmerMod <- function(x,...){
         d1 <- L %*% d0 %*% t(L)
         dfin <- solve(d1)
         
-        score[, ((ncol(X)+2):ncol(score))] <- as.matrix(score[, ((ncol(X)+2):ncol(score))] %*% dfin)
+        score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
         ## parameterize to sd and corr
         sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
         sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
         sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
         sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        score[, ((ncol(X)+2):ncol(score))] <- sweep(score[, ((ncol(X)+2):ncol(score))], MARGIN = 2, sdcormat$sdcor2, `*`)
+        score[, ((ncol(X)+1):ncol(score))] <- sweep(score[, ((ncol(X)+1):ncol(score))], MARGIN = 2, sdcormat$sdcor2, `*`)
       }
       if (!(ranpar %in% c("sd", "theta", "var"))){
           stop("ranpar needs to be sd, theta or var for glmerMod object.")
       }
-    }
-  }
   score
 }
 
