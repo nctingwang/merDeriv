@@ -22,7 +22,7 @@
   If \code{ranpar = "var"}, the random effects are parameterized as 
   variance/covariance; If \code{ranpar = "sd"}, the random effects are 
   parameterized as standard deviation/correlation; If \code{ranpar = "theta"}, 
-  the random effects are parameterized as components of Cholesky decompostion. 
+  the random effects are parameterized as components of Cholesky decomposition. 
 }
 \references{
   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 
@@ -31,13 +31,13 @@
 }
 \examples{
 \dontrun{
-data(finance, package="smdata")
+data(finance, package = "smdata")
 
 lme4fit <- glmer(corr ~ jmeth + (1 | item), data = finance,
                  family = binomial, nAGQ = 20)
 
 # clusterwise scores
-estfun(lme4fit)
+estfun(lme4fit, ranpar = "var")
 }
 }
 

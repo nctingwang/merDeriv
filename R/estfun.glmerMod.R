@@ -118,7 +118,8 @@ estfun.glmerMod <- function(x,...){
 
       if (ranpar == "var") {
             ## get variance and sd 
-            sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
+          sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"),
+            order = "lower.tri")
             ## chain rule
             sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- (1/2) * 
               sdcormat$sdcor[which(is.na(sdcormat$var2))]^(-1/2)
@@ -142,8 +143,10 @@ estfun.glmerMod <- function(x,...){
 
       x.star <- t(as.matrix(C %*% t(XW$x) + as.numeric(etamns)))
       lav_mvnorm_dmvnorm <- getFromNamespace("lav_mvnorm_dmvnorm", "lavaan")
-      w.star <- XW$w * (2*pi)^(ndim/2) * det(C) * exp(0.5 * apply(XW$x, 1, crossprod)) *     
-        lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim), Sigma = VarCov[[1]], log = FALSE)
+      w.star <- XW$w * (2*pi)^(ndim/2) * det(C) *
+        exp(0.5 * apply(XW$x, 1, crossprod)) *     
+          lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim), Sigma = VarCov[[1]],
+            log = FALSE)
 
       out[j,] <- (t(score.prod(S = x.star,
                                Xi = as.matrix(X[grps==grpnm[j],]),
@@ -154,50 +157,57 @@ estfun.glmerMod <- function(x,...){
                                grp = as.numeric(grpnm[j]), fam = fam, 
                                devLambda = devLambda, Lambda = parts$Lambda,
                                iLambda = iLambda,
-                               formula = x@call$formula, frame = x@frame)) %*% w.star)
+                               formula = x@call$formula, frame = x@frame))
+                   %*% w.star)
 
         score[j,] <- out[j,-1]/out[j,1]
-      }
-    }
-      if (ranpar=="theta"){
-         score <- score
-      }
-  
-    
-      if (ranpar == "var") {
-        ## create weight matrix
-        d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
-          (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
-        L <- elimination.matrix(ndim)
-        d1 <- L %*% d0 %*% t(L)
-        dfin <- solve(d1)
-    
-        score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
-      }
-      if (ranpar == "sd"){
-        d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
-           (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
-        L <- elimination.matrix(ndim)
-        d1 <- L %*% d0 %*% t(L)
-        dfin <- solve(d1)
-        
-        score[, ((ncol(X)+1):ncol(score))] <- as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
-        ## parameterize to sd and corr
-        sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"), order = "lower.tri")
-        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
-        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
-        sdcormat$sdcor[which(!is.na(sdcormat$var2))]
-        score[, ((ncol(X)+1):ncol(score))] <- sweep(score[, ((ncol(X)+1):ncol(score))], MARGIN = 2, sdcormat$sdcor2, `*`)
-      }
-      if (!(ranpar %in% c("sd", "theta", "var"))){
+     }
+        if (ranpar=="theta"){
+           score <- score
+        }
+ 
+        if (ranpar == "var"){
+          ## create weight matrix
+          d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
+            (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
+          L <- elimination.matrix(ndim)
+          d1 <- L %*% d0 %*% t(L)
+          dfin <- solve(d1)
+          score[, ((ncol(X)+1):ncol(score))] <-
+            as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% 
+              dfin)
+        }
+        if (ranpar == "sd"){
+          d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
+             (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
+          L <- elimination.matrix(ndim)
+          d1 <- L %*% d0 %*% t(L)
+          dfin <- solve(d1)
+          score[, ((ncol(X)+1):ncol(score))] <-
+            as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
+          ## parameterize to sd and corr
+          sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"),
+            order = "lower.tri")
+          sdcormat$sdcor2[which(is.na(sdcormat$var2))] <-
+            sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
+          sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <-
+            sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+              sdcormat$sdcor[which(!is.na(sdcormat$var2))]
+          score[, ((ncol(X)+1):ncol(score))] <-
+            sweep(score[, ((ncol(X)+1):ncol(score))], MARGIN = 2,
+              sdcormat$sdcor2, `*`)
+        }
+        if (!(ranpar %in% c("sd", "theta", "var"))){
           stop("ranpar needs to be sd, theta or var for glmerMod object.")
-      }
+        }
+    }
   score
 }
 
 
 
-score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam, devLambda, Lambda, iLambda, formula, frame, j) {
+score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam,
+                       devLambda, Lambda, iLambda, formula, frame, j) {
   Y <- as.numeric(Y)
   
   # number of quadrature points

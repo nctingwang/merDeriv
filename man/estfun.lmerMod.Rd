@@ -36,10 +36,10 @@
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
 # casewise scores
-estfun(lme4fit, level = 1)
+estfun(lme4fit, level = 1, ranpar = "var")
 
 # clusterwise scores
-estfun(lme4fit, level = 2)
+estfun(lme4fit, level = 2, ranpar = "sd")
 }
 }
 

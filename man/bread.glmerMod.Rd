@@ -14,7 +14,8 @@
 \arguments{
   \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
   \item{\dots}{additional arguments,
-    including \code{full} (\code{full = FALSE}; see details).}
+    including \code{full} and \code{ranpar} (\code{full = FALSE},
+    \code{ranpar = "var"}; see details).}
 }
 \value{
   A \emph{p} by \emph{p} "bread" matrix for the Huber-White sandwich estimator 
@@ -25,7 +26,12 @@
   variance-covariance matrix of only fixed effect 
   parameters. If \code{full = TRUE} , returns the variance-covariance matrix 
   for all fitted parameters (including fixed effect parameters, 
-  random effect (co)variances, and residual variance. 
+  random effect (co)variances, and residual variance.
+  If \code{ranpar = "var"}, the random effects are parameterized as 
+  variance/covariance; If \code{ranpar = "sd"}, the random effects are 
+  parameterized as standard deviation/correlation; If \code{ranpar = "theta"}, 
+  the random effects are parameterized as components of Cholesky
+  decomposition.  
 }
 \references{
   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 
@@ -39,12 +45,12 @@
 \examples{
 \dontrun{
 # The cbpp example
-data(finance, package="smdata")
+data(finance, package = "smdata")
 
 lme4fit <- glmer(corr ~ jmeth + (1 | item), data = finance,
                  family = binomial, nAGQ = 20)
 
 # bread component for all parameters
-bread(lme4fit, full = TRUE)
+bread(lme4fit, full = TRUE, ranpar = "var")
 }
 }

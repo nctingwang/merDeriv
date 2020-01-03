@@ -64,7 +64,7 @@ vcov.lmerMod <- function(object, ...) {
     ranhes <- matrix(NA, nrow = (uluti + 1), ncol = (uluti + 1))
     ## combinations (allow repeat) to indicate entries
     entries <- rbind(matrix(rep(1: (uluti + 1), each = 2),
-                            (uluti + 1), 2, byrow = TRUE), t(combn((uluti + 1), 2)))
+      (uluti + 1), 2, byrow = TRUE), t(combn((uluti + 1), 2)))
     entries <- entries[order(entries[,1], entries[,2]), ]
     ## ML estimates
     if (object@devcomp$dims[10] == 0) {
@@ -121,14 +121,19 @@ vcov.lmerMod <- function(object, ...) {
         varcov_beta <- varcov_beta
     } else if (ranpar == "sd") {
         ## varcov_beta reparameterization
-        sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"), order = "lower.tri")
-        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <- sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
-        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <- sdcormat$vcov[which(!is.na(sdcormat$var2))]/
-          sdcormat$sdcor[which(!is.na(sdcormat$var2))]
+        sdcormat <- as.data.frame(VarCorr(object,comp = "Std.Dev"),
+          order = "lower.tri")
+        sdcormat$sdcor2[which(is.na(sdcormat$var2))] <-
+          sdcormat$sdcor[which(is.na(sdcormat$var2))]*2
+        sdcormat$sdcor2[which(!is.na(sdcormat$var2))] <-
+          sdcormat$vcov[which(!is.na(sdcormat$var2))]/
+            sdcormat$sdcor[which(!is.na(sdcormat$var2))]
         varcov_beta <- sweep(varcov_beta, MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
-        weight <- apply(entries, 1, function(x) sdcormat$sdcor2[x[1]] * sdcormat$sdcor2[x[2]])
-        ranhes[lower.tri(ranhes, diag = TRUE)] <- weight * ranhes[lower.tri(ranhes, diag = TRUE)]
+        weight <- apply(entries, 1, function(x)
+          sdcormat$sdcor2[x[1]] * sdcormat$sdcor2[x[2]])
+        ranhes[lower.tri(ranhes, diag = TRUE)] <- weight *
+          ranhes[lower.tri(ranhes, diag = TRUE)]
         ranhes <- forceSymmetric(ranhes, uplo = "L")
       } else {
         stop("ranpar needs to be var or sd for lmerMod object.")
@@ -141,7 +146,8 @@ vcov.lmerMod <- function(object, ...) {
     
     callingFun <- try(deparse(sys.call(-2)), silent = TRUE)
     if(length(callingFun) > 1) callingFun <- paste(callingFun, collapse="")
-    if(!inherits(callingFun, "try-error") & grepl("summary.merMod", callingFun)){
+    if(!inherits(callingFun, "try-error") &
+       grepl("summary.merMod", callingFun)){
       return(fixvar)
     } else {
       return(full_varcov)

@@ -13,9 +13,9 @@
 \arguments{
   \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
   \item{\dots}{additional arguments, including \code{full} 
-  and \code{information} (\code{full = FALSE} 
-  and \code{information = "expected"} 
-  are default; see details).}
+    \code{information}, and \code{ranpar} (\code{full = FALSE},
+    \code{information = "expected"} and \code{ranpar = "var"}
+    are default; see details).}
 }
 \value{
   A \emph{p} by \emph{p} "bread" matrix for the Huber-White sandwich estimator 
@@ -30,7 +30,9 @@
   is based on the inversion of Fisher information matrix.   
   If \code{information = "observed"}, the variance-covariance matrix
   is based on the observed Fisher information, which is the negative
-  of Hessian matrix.
+  of Hessian matrix.  If \code{ranpar = "var"}, the random effects are 
+  parameterized as variance/covariance; If \code{ranpar = "sd"}, 
+  the random effects are parameterized as standard deviation/correlation. 
 }
 \references{
   Wang, T. & Merkle, E. C. (2018). Derivative Computations and Robust Standard
@@ -47,6 +49,6 @@
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
 
 # bread component for all parameters
-bread(lme4fit, full = TRUE)
+bread(lme4fit, full = TRUE, information = "expected", ranpar = "var")
 }
 }

@@ -12,7 +12,7 @@
 \arguments{
   \item{object}{An object of class \code{\linkS4class{glmerMod}}.}
   \item{\dots}{additional arguments, including \code{full} and \code{ranpar}
-  (\code{full = FALSE} and \code{ranpar = "var"} default; see details).}
+  (\code{full = FALSE} and \code{ranpar = "var"} are default; see details).}
 }
 \value{
   A \emph{p} by \emph{p} variance-covariance matrix, where \emph{p}
@@ -23,10 +23,11 @@
   for all fitted parameters (including fixed effect parameters and random 
   effect (co)variances). The variance-covariance matrix
   is based on the negative of Hessian matrix, which is extracted from 
-  \code{lme4}.  If \code{ranpar = "var"}, the random effects are parameterized as 
-  variance/covariance; If \code{ranpar = "sd"}, the random effects are 
-  parameterized as standard deviation/correlation; If \code{ranpar = "theta"}, 
-  the random effects are parameterized as components of Cholesky decompostion. 
+  \code{lme4}.  If \code{ranpar = "var"}, the random effects are
+  parameterized as variance/covariance; If \code{ranpar = "sd"},
+  the random effects are parameterized as standard
+  deviation/correlation; If \code{ranpar = "theta"}, 
+  the random effects are parameterized as components of Cholesky decomposition. 
 }
 \references{
   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). 
@@ -42,6 +43,6 @@ lme4fit <- glmer(corr ~ jmeth + (1 | item), data = finance,
                  family = binomial, nAGQ = 20)
 
 # variance covariance matrix for all parameters
-vcov(lme4fit, full = TRUE)
+vcov(lme4fit, full = TRUE, ranpar = "var")
 }
 }
