@@ -9,8 +9,8 @@ estfun.lmerMod <- function(x, ...) {
   
   ## error for variance equal to 0 or non-positive definite
   ndim = nrow(cor)
-  if (ndim == 1 & unclass(VarCorr(x))[[1]] == 0) stop ("Random effect's variance is close to 0. Please check the model estimation")
-  if (ndim > 1 & !matrixcalc::is.positive.definite(as.matrix(vcov.merMod(x), method = c("chol")))) stop ("Random effect's variance covariance matrix is not positive definite. Please check the model estimation")
+  if (ndim == 1 & unclass(VarCorr(x))[[1]] == 0) stop ("Random effect's variance is close to 0. Cannot compute the derivatives.")
+  if (ndim > 1 & !matrixcalc::is.positive.definite(as.matrix(vcov.merMod(x), method = c("chol")))) stop ("Random effect's variance covariance matrix is not positive definite. Cannot compute the derivatives.")
   
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(x, "ALL")
