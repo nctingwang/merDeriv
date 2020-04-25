@@ -75,7 +75,7 @@ estfun.glmerMod <- function(x,...){
   N <- nobs(x)
   ndim <- sapply(VarCov, nrow)
   if (ndim == 1 & VarCov[[1]] == 0) stop ("Random effect's variance is close to 0. Cannot compute derivatives.")
-  if (ndim > 1 & ! matrixcalc::is.positive.definite(as.matrix(vcov.merMod(x), method = c("chol")))) stop ("Random effect's variance covariance matrix is not positive definite. Cannot compute derivatives.")
+  if (ndim > 1 & ! matrixcalc::is.positive.definite(VarCov[[1]])) stop ("Random effect's variance covariance matrix is not positive definite. Cannot compute derivatives.")
   ## FIXME this has length > 1 for crossed
   J <- getME(x, "l_i")
   #lik <- numeric(J)
