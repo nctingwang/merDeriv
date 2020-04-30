@@ -1,6 +1,6 @@
 vcov.lmerMod <- function(object, ...) {
   
-  if (!is(object, "lmerMod")) stop("estfun.lmerMod() only works for lmer() models.")
+  if (!is(object, "lmerMod")) stop("vcov.lmerMod() only works for lmer() models.")
   
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
@@ -87,6 +87,7 @@ vcov.lmerMod <- function(object, ...) {
     ## REML estimates
     if (parts$devcomp$dims[['REML']] > 0) {
       if(information == "expected") {
+        ## this is excessively slow and could be improved:
         ranhes[lower.tri(ranhes, diag = TRUE)] <- apply(entries, 1, 
           function(x) as.numeric((1/2) * lav_matrix_trace(tcrossprod(
           tcrossprod(crossprod(P, devV[[x[1]]]), P), t(devV[[x[2]]])))))
@@ -137,6 +138,7 @@ vcov.lmerMod <- function(object, ...) {
     } else {
         stop("ranpar needs to be var or sd for lmerMod object.")
     }
+
     full_varcov <- solve(rbind(cbind(fixhes, t(varcov_beta)),
                                cbind(varcov_beta, ranhes)))
     

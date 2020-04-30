@@ -6,7 +6,7 @@ importFrom("stats",
            "vcov", "aggregate", "dnorm", "glm", "nobs", "predict")
 
 importFrom("Matrix", 
-           "forceSymmetric", "lu", "Diagonal")
+           "forceSymmetric", "lu", "Diagonal", "nearPD")
 
 importClassesFrom("Matrix", 
                    "dgCMatrix", "dtCMatrix", "dgTMatrix", "dsCMatrix", "dgeMatrix")

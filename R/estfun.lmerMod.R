@@ -8,9 +8,7 @@ estfun.lmerMod <- function(x, ...) {
   if(any(abs(cor[lower.tri(cor)]) > .9)) warning("Correlations > |.9| detected. Scores of random (co)variances may be unstable.")
   
   ## error for variance equal to 0 or non-positive definite
-  ndim = nrow(cor)
-  if (ndim == 1 & unclass(VarCorr(x))[[1]]  == 0) stop ("Random effect's variance is close to 0. Cannot compute derivatives.")
-  if (ndim > 1 & matrixcalc::is.positive.definite(unclass(VarCorr(x))[[1]])) stop ("Random effect's variance covariance matrix is not positive definite. Cannot compute derivatives.")
+  ndim <- nrow(cor)
   
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(x, "ALL")

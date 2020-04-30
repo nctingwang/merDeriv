@@ -14,9 +14,7 @@ llcont.lmerMod <- function(x, ...) {
   
   ## error for variance equal to 0 or non-positive definite
   cor <- attr(lme4::VarCorr(x)[[1]], "correlation")
-  ndim = nrow(cor)
-  if (ndim == 1 & unclass(VarCorr(x))[[1]]  == 0) stop ("Random effect's variance is close to 0. Cannot compute log-likelihood.")
-  if (ndim > 1 & matrixcalc::is.positive.definite(unclass(VarCorr(x))[[1]])) stop ("Random effect's variance covariance matrix is not positive definite. Cannot compute log-likelihood.")
+  ndim <- nrow(cor)
   
   ## get all elements by getME and exclude multiple random effect models.
   parts <- getME(x, "ALL")
