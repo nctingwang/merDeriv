@@ -15,5 +15,5 @@ bread.glmerMod <- function (x, ...){
 if(!(full %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
   
   object <- x
-  return(vcov.lmerMod(object, full = full) * parts)
+  return(vcov.glmerMod(object, full = full) * parts)
 }

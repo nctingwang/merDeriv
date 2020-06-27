@@ -14,6 +14,7 @@ Authors@R: c(person(given = "Ting", family = "Wang",
 Description: Compute case-wise and cluster-wise derivative for mixed effects models with respect to fixed effects parameter, random effect (co)variances, and residual variance. This material is partially based on work supported by the National Science Foundation under Grant Number 1460719.
 Depends: R (>= 3.2.3), lme4 (>= 1.1-10), stats, methods, nonnest2, sandwich, lavaan
 Imports: utils, Matrix, matrixcalc, numDeriv
+Suggests: smdata
 License: GPL (>= 2)
 LazyData: yes
 URL: http://semtools.r-forge.r-project.org
