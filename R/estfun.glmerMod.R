@@ -227,7 +227,7 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam,
       as.character(formula)[1]), bracketrm)
     aphi <- summary(glm(formula(formglm), frame, family= fam[[1]]))$dispersion
   }
-   tmpre <- as.matrix(re.modes)
+  tmpre <- as.matrix(re.modes)
  
 
   for(i in 1:nQ) {
