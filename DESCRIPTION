@@ -16,6 +16,6 @@ Depends: R (>= 3.2.3), lme4 (>= 1.1-10), stats, methods, nonnest2, sandwich, lav
 Imports: utils, Matrix, matrixcalc, numDeriv
 License: GPL (>= 2)
 LazyData: yes
-URL: http://semtools.r-forge.r-project.org
+URL: https://github.com/nctingwang/merDeriv
 NeedsCompilation: no
 Maintainer: Ting Wang <twb8d@mail.missouri.edu>
