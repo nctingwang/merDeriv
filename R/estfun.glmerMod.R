@@ -171,25 +171,24 @@ estfun.glmerMod <- function(x,...){
   }
 
   if(ndim > 1){
-    if (ranpar == "var"){
-      ## create weight matrix
-      d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
-        (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
-      L <- elimination.matrix(ndim)
-      d1 <- L %*% d0 %*% t(L)
-      dfin <- solve(d1)
-      score[, ((ncol(X)+1):ncol(score))] <-
-        as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% 
-                  dfin)
-    }
-    if (ranpar == "sd"){
-      d0 <- (diag(1,nrow=ndim^2) + commutation.matrix(r=ndim)) %*% 
-        (parts$Lambda[(1:ndim), (1:ndim)] %x% diag(1,nrow=ndim))
-      L <- elimination.matrix(ndim)
-      d1 <- L %*% d0 %*% t(L)
+    if (ranpar %in% c("var", "sd")){
+      uvals <- which(lower.tri(diag(ndim), diag=TRUE), arr.ind = TRUE)
+
+      d1 <- matrix(NA, nrow(uvals), nrow(uvals))
+      plam <- parts$Lambda[1:ndim, 1:ndim]
+      zmat <- matrix(0, ndim, ndim)
+      for (k in 1:nrow(uvals)){
+        jij <- zmat
+        jij[uvals[k,1], uvals[k,2]] <- 1
+        matp <- plam %*% t(jij)
+        tmpd <- matp + t(matp)
+        d1[,k] <- tmpd[lower.tri(tmpd, diag=TRUE)]
+      }
       dfin <- solve(d1)
       score[, ((ncol(X)+1):ncol(score))] <-
         as.matrix(score[, ((ncol(X)+1):ncol(score))] %*% dfin)
+    }
+    if (ranpar == "sd"){
       ## parameterize to sd and corr
       sdcormat <- as.data.frame(VarCorr(x,comp = "Std.Dev"),
                                 order = "lower.tri")
