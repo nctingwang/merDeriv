@@ -6,14 +6,13 @@ bread.glmerMod <- function (x, ...){
   if (length(parts) > 1) stop("Multiple cluster variables detected. Robust SEs are unavailable.")
   
   dotdotdot <- list(...)
+  full <- TRUE
   if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full
-  } else {
-    full <- FALSE
   }
   
-if(!(full %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
+  if(!(full %in% c("TRUE", "FALSE"))) stop("invalid 'full' argument supplied")
   
   object <- x
-  return(vcov.lmerMod(object, full = full) * parts)
+  return(vcov.glmerMod(object, full = full) * parts)
 }
