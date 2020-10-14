@@ -12,9 +12,9 @@ llcont.glmerMod <- function(x, ...){
   ## extract nAGQ used in model fit, unless overridden by ...
   ddd <- list(...)
   if ("nAGQ" %in% names(ddd)){
-    ngq <- ddd$nAGQ
+    ngq <- max(ddd$nAGQ, 1L)
   } else {
-    ngq <- x@devcomp$dims['nAGQ']
+    ngq <- 1L
   }
     
   ## 1a. obtain random effect predictions + sds from predict()
@@ -118,7 +118,7 @@ llcont.glmerMod <- function(x, ...){
                   fe.pred = fe.pred[grps==grpnm[j]],
                   Zi = as.matrix(Z[grps==grpnm[j],]),
                   re.modes = re.modes[[1]],
-                  grp = as.numeric(grpnm[j]),
+                  grp = which(grpnm == grpnm[j]),
                   fam = fam) * w.star )
     }
   }
