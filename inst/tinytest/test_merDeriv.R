@@ -24,7 +24,7 @@ data <- expand.table(LSAT7)
 data$person <- as.numeric(rownames(data))
 datalong <- melt(data, id = c("person"))
 fit <- glmer(value ~ -1 + variable + (1|person), family = binomial, 
-             data = datalong, nAGQ = 20)
+             data = datalong, nAGQ = 30)
 score <- estfun.glmerMod(fit)
 
 # score from mirt
@@ -32,15 +32,15 @@ data <- expand.table(LSAT7)
 mod <- mirt(data, 1, itemtype="Rasch")
 sc1 <- estfun.AllModelClass(mod)
 ## compare
-expect_equal(round(score), round(sc1))
+expect_true(all(abs(score[,1:5] - sc1[,1:5]) < .01))
 
 
 ## non-canonical link check
-fit2 <- glmer(value ~ -1 + variable + (1|person), family =
-binomial(link = "cloglog"), 
-data = datalong, nAGQ = 20)
+fit2 <- glmer(value ~ -1 + variable + (1|person),
+              family = binomial(link = "cloglog"), 
+              data = datalong, nAGQ = 5)
 fixscore2 <- estfun.glmerMod(fit2)
-expect_equal(round(colSums(fixscore2),0), rep(0, 6))
+expect_true(all(abs(colSums(fixscore2)) < .1))
 
 ## check poisson 
 ## fit poisson
@@ -61,7 +61,7 @@ simfun <- function(ng = 20, nr = 100, fsd = 1, indsd = 0.2, b = c(1,2)) {
 dd <- simfun()
 m0 <- glmer(y ~ x + (1|f), family = "poisson", data = dd, nAGQ = 20)
 score <- estfun.glmerMod(m0)
-expect_equal(round(colSums(score)), rep(0,3))
+expect_true(all(abs(colSums(score)) < .3))
 
 
 
