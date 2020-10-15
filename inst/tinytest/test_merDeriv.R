@@ -2,9 +2,62 @@
 library("lme4")
 library("mirt")
 library("reshape2")
+library("nonnest2")
+library("data.table")
 
 data(VerbAgg)
 
+## lmm models checks.
+lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
+
+# log likelihood check
+expect_equal(as.numeric(round(sum(llcont(lme4fit, level = 1)),4)), 
+             as.numeric(round(logLik(lme4fit),4)))
+
+## score check
+score2 <- estfun(lme4fit, ranpar = "var", level = 2)
+library("lavaan")
+testwide <- reshape2::dcast(sleepstudy, Subject ~ Days, 
+                            value.var = "Reaction")
+names(testwide)[2:11] <- paste("d", 1:10, sep = "")
+## describe latent model
+latent <- 'i =~ 1*d1 + 1*d2 + 1*d3 + 1*d4 + 1*d5
++ 1*d6 + 1*d7 + 1*d8 + 1*d9 + 1*d10
+
+s = ~ 0*d1 + 1*d2 + 2*d3 + 3*d4 + 4*d5
++ 5*d6 + 6*d7 + 7*d8 + 8*d9 + 9*d10
+
+d1 ~~ evar*d1
+d2 ~~ evar*d2
+d3 ~~ evar*d3
+d4 ~~ evar*d4
+d5 ~~ evar*d5
+d6 ~~ evar*d6
+d7 ~~ evar*d7
+d8 ~~ evar*d8
+d9 ~~ evar*d9
+d10 ~~ evar*d10
+
+## reparameterize as sd
+sdevar := sqrt(evar)
+i ~~ ivar*i
+isd := sqrt(ivar)
+s ~~ svar*s
+ssd := sqrt(svar)
+i ~~ iscov*s
+rho := iscov/(isd*ssd)'
+## fit model in lavaan
+lavaanfit <- growth(latent, data = testwide, estimator = "ML")
+score2_lavaan <- as.data.frame(lavaan::estfun.lavaan(lavaanfit))
+score2_lavaan <- score2_lavaan[,c(5, 6, 2, 4, 3, 1)]
+expect_true(all(score2_lavaan-score2 < 0.001))
+
+## vcov and bread dimension check
+expect_equal(dim(vcov(lme4fit)), c(2,2))
+expect_equal(dim(vcov(lme4fit, full = TRUE, information = "observed")), c(6,6))
+expect_equal(dim(bread(lme4fit, full = TRUE)), c(6,6))
+
+## glmm models checks
 ## check llcont.glmerMod:
 fmVA0 <- glmer(r2 ~ Anger + (Gender | item), family = binomial, data = VerbAgg, nAGQ=0L)
 ll <- llcont.glmerMod(fmVA0)
