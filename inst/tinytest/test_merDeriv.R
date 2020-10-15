@@ -2,8 +2,6 @@
 library("lme4")
 library("mirt")
 library("reshape2")
-library("nonnest2")
-library("data.table")
 
 data(VerbAgg)
 
