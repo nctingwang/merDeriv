@@ -19,4 +19,5 @@ LazyData: yes
 URL: https://github.com/nctingwang/merDeriv
 NeedsCompilation: no
 Maintainer: Ting Wang <twb8d@mail.missouri.edu>
-Suggests: tinytest, smdata, mirt, reshape2
+Suggests: tinytest, smdata, mirt
+

@@ -1,10 +1,7 @@
 
 library("lme4")
 library("mirt")
-library("reshape2")
 library("lavaan")
-
-data(VerbAgg)
 
 ## lmm models checks.
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
@@ -16,9 +13,10 @@ expect_equal(as.numeric(round(sum(llcont(lme4fit, level = 1)),4)),
 ## score check
 score2 <- estfun(lme4fit, ranpar = "var", level = 2)
 
-testwide <- reshape2::dcast(sleepstudy, Subject ~ Days, 
-                            value.var = "Reaction")
-names(testwide)[2:11] <- paste("d", 1:10, sep = "")
+testwide <- as.data.frame(t(matrix(sleepstudy$Reaction, 10, length(unique(sleepstudy$Subject)))))
+names(testwide) <- paste("d", 1:10, sep = "")
+testwide$Subject <- unique(sleepstudy$Subject)
+
 ## describe latent model
 latent <- 'i =~ 1*d1 + 1*d2 + 1*d3 + 1*d4 + 1*d5
 + 1*d6 + 1*d7 + 1*d8 + 1*d9 + 1*d10
@@ -66,7 +64,8 @@ expect_equal(as.numeric(round(sum(ll),4)), as.numeric(round(logLik(fmVA0),4)))
 ll <- llcont.glmerMod(fmVA0, nAGQ=5)
 expect_equal(as.numeric(round(sum(ll))), as.numeric(round(logLik(fmVA0)))) # (these disagree a little)
 
-## error for multiple clustering variables
+## error for multiple clustering variable
+data(VerbAgg)
 fm2 <- glmer(r2 ~ Anger + (Anger | item) + (1 | id), family = binomial, data = VerbAgg, nAGQ=0L)
 expect_error(llcont.glmerMod(fm2))
 
