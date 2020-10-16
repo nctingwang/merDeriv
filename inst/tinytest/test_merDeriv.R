@@ -73,7 +73,13 @@ expect_error(llcont.glmerMod(fm2))
 ## score from lme4
 data <- expand.table(LSAT7)
 data$person <- as.numeric(rownames(data))
-datalong <- melt(data, id = c("person"))
+datalong <- as.data.frame(matrix(NA, nrow(data)*5, 3))
+colnames(datalong) <- c("person", "variable", "value")
+datalong$variable <- rep(paste0("Item.", seq(1,5)), 
+                         each = nrow(data))
+datalong$person <- rep(as.numeric(rownames(data)),5)
+datalong$value <- as.numeric(as.vector(as.matrix(data[,c(1:5)])))
+#datalong <- melt(data, id = c("person"))
 fit <- glmer(value ~ -1 + variable + (1|person), family = binomial, 
              data = datalong, nAGQ = 30)
 score <- estfun.glmerMod(fit)
