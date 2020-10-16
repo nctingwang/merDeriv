@@ -2,6 +2,7 @@
 library("lme4")
 library("mirt")
 library("reshape2")
+library("lavaan")
 
 data(VerbAgg)
 
@@ -14,7 +15,7 @@ expect_equal(as.numeric(round(sum(llcont(lme4fit, level = 1)),4)),
 
 ## score check
 score2 <- estfun(lme4fit, ranpar = "var", level = 2)
-library("lavaan")
+
 testwide <- reshape2::dcast(sleepstudy, Subject ~ Days, 
                             value.var = "Reaction")
 names(testwide)[2:11] <- paste("d", 1:10, sep = "")
