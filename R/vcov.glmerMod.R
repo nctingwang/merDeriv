@@ -15,8 +15,11 @@ vcov.glmerMod <- function(object, ...) {
   if (full == FALSE) {
     full_vcov <- vcov.merMod(object)
   } else {
+    if (length(getME(object, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported for full vcov.")
+    
     ## Hessian was based on deviance function, which is the 
     ## -2*LogLik. That's why divided by -2
+    if (object@devcomp$dims[['nAGQ']] == 0L) stop("For full vcov, nAGQ of at least 1 is required.")
     full_vcov_noorder <- -solve(object@optinfo$derivs$Hessian/(-2))
   
     ## Block order in Hessian was theta, beta. Reorganize to 

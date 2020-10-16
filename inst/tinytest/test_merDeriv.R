@@ -13,6 +13,9 @@ expect_equal(as.numeric(round(sum(llcont(lme4fit, level = 1)),4)),
 ## score check
 score2 <- estfun(lme4fit, ranpar = "var", level = 2)
 
+## vcov check
+expect_true(dim(vcov(lme4fit, full = TRUE))[1] == 6L)
+
 testwide <- as.data.frame(t(matrix(sleepstudy$Reaction, 10, length(unique(sleepstudy$Subject)))))
 names(testwide) <- paste("d", 1:10, sep = "")
 testwide$Subject <- unique(sleepstudy$Subject)
@@ -55,10 +58,13 @@ expect_equal(dim(vcov(lme4fit, full = TRUE, information = "observed")), c(6,6))
 expect_equal(dim(bread(lme4fit, full = TRUE)), c(6,6))
 
 ## glmm models checks
-## check llcont.glmerMod:
 fmVA0 <- glmer(r2 ~ Anger + (Gender | item), family = binomial, data = VerbAgg, nAGQ=0L)
+expect_error(vcov(fmVA0, full = TRUE))
+
+fmVA0 <- glmer(r2 ~ Anger + (Gender | item), family = binomial, data = VerbAgg, nAGQ=1L)
 ll <- llcont.glmerMod(fmVA0)
 expect_equal(as.numeric(round(sum(ll),4)), as.numeric(round(logLik(fmVA0),4)))
+expect_true(dim(vcov(fmVA0, full = TRUE))[1] == 5L)
 
 ## with different nAGQ
 ll <- llcont.glmerMod(fmVA0, nAGQ=5)
@@ -68,6 +74,7 @@ expect_equal(as.numeric(round(sum(ll))), as.numeric(round(logLik(fmVA0)))) # (th
 data(VerbAgg)
 fm2 <- glmer(r2 ~ Anger + (Anger | item) + (1 | id), family = binomial, data = VerbAgg, nAGQ=0L)
 expect_error(llcont.glmerMod(fm2))
+expect_error(vcov(fm2, full=TRUE))
 
 ## compare with score produced by mirt
 ## score from lme4
@@ -83,6 +90,7 @@ datalong$value <- as.numeric(as.vector(as.matrix(data[,c(1:5)])))
 fit <- glmer(value ~ -1 + variable + (1|person), family = binomial, 
              data = datalong, nAGQ = 30)
 score <- estfun.glmerMod(fit)
+expect_true(dim(vcov(fit, full=TRUE))[1] == 6)
 
 # score from mirt
 data <- expand.table(LSAT7)
@@ -98,6 +106,7 @@ fit2 <- glmer(value ~ -1 + variable + (1|person),
               data = datalong, nAGQ = 5)
 fixscore2 <- estfun.glmerMod(fit2)
 expect_true(all(abs(colSums(fixscore2)) < .1))
+expect_true(dim(vcov(fit2, full=TRUE))[1] == 6)
 
 ## check poisson 
 ## fit poisson
@@ -119,6 +128,6 @@ dd <- simfun()
 m0 <- glmer(y ~ x + (1|f), family = "poisson", data = dd, nAGQ = 20)
 score <- estfun.glmerMod(m0)
 expect_true(all(abs(colSums(score)) < .3))
-
+expect_true(dim(vcov(m0, full=TRUE))[1] == 3)
 
 
