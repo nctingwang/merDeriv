@@ -41,7 +41,7 @@
 
   Zeileis, A. (2006). Object-Oriented Computation of Sandwich Estimators. 
   Journal of Statistical Software, \bold{16}(9), 1-16. 
-  \url{http://www.jstatsoft.org/v16/i09/}
+  \url{https://www.jstatsoft.org/v16/i09/}
 }
 \examples{
 \dontrun{
