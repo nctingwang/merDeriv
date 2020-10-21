@@ -1,6 +1,6 @@
 Package: merDeriv
 Title: Case-Wise and Cluster-Wise Derivatives for Mixed Effects Models 
-Version: 0.2-1
+Version: 0.2-2
 Authors@R: c(person(given = "Ting", family = "Wang",
                     role = c("aut", "cre"),
                     email = "twb8d@mail.missouri.edu"),
@@ -19,5 +19,5 @@ LazyData: yes
 URL: https://github.com/nctingwang/merDeriv
 NeedsCompilation: no
 Maintainer: Ting Wang <twb8d@mail.missouri.edu>
-Suggests: tinytest, smdata, mirt
+Suggests: tinytest, mirt
 

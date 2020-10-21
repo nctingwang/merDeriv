@@ -1,7 +1,7 @@
 
 library("lme4")
-library("mirt")
 library("lavaan")
+library("mirt")
 
 ## lmm models checks.
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
@@ -93,11 +93,11 @@ score <- estfun.glmerMod(fit)
 expect_true(dim(vcov(fit, full=TRUE))[1] == 6)
 
 # score from mirt
-data <- expand.table(LSAT7)
-mod <- mirt(data, 1, itemtype="Rasch")
-sc1 <- estfun.AllModelClass(mod)
+#data <- expand.table(LSAT7)
+#mod <- mirt(data, 1, itemtype="Rasch")
+#sc1 <- estfun.AllModelClass(mod)
 ## compare
-expect_true(all(abs(score[,1:5] - sc1[,1:5]) < .01))
+#expect_true(all(abs(score[,1:5] - sc1[,1:5]) < .01))
 
 
 ## non-canonical link check
