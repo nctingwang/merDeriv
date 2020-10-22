@@ -78,7 +78,7 @@ vcov.glmerMod <- function(object, ...) {
           (sdcormat$vcov[which(!is.na(sdcormat$var2))]/
              sdcormat$sdcor[which(!is.na(sdcormat$var2))])^(-1)
         hh[((pran + 1):p), (1:pran)] <- sweep(as.matrix(hh[((pran + 1):p),
-          (1:pran)]), MARGIN = 1, sdcormat$sdcor2, `*`)
+          (1:pran)]), MARGIN = 2, sdcormat$sdcor2, `*`)
         hh[(1:pran), ((pran + 1):p)] <- sweep(as.matrix(hh[(1:pran),
           ((pran + 1):p)]), MARGIN = 1, sdcormat$sdcor2, `*`)
         ## ranhes reparameterization
