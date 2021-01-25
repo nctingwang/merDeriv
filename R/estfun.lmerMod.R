@@ -45,7 +45,7 @@ estfun.lmerMod <- function(x, ...) {
   invV <- tcrossprod(M, M)
   yXbesoV <- crossprod(yXbe, invV)
   LambdaInd <- parts$Lambda
-  LambdaInd@x[] <- seq(1:uluti)
+  LambdaInd@x[] <- parts$Lind
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))

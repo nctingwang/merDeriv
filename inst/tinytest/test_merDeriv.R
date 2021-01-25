@@ -2,6 +2,8 @@
 library("lme4")
 library("lavaan")
 library("mirt")
+library("nlme")
+library("lmeInfo")
 
 ## lmm models checks.
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
@@ -129,5 +131,15 @@ m0 <- glmer(y ~ x + (1|f), family = "poisson", data = dd, nAGQ = 20)
 score <- estfun.glmerMod(m0)
 expect_true(all(abs(colSums(score)) < .3))
 expect_true(dim(vcov(m0, full=TRUE))[1] == 3)
+
+## check multiple groups vcov
+Oats.lme <- lme(yield ~ nitro*Variety, random=~1|Block/Variety, method="REML", data=Oats)
+Oats.lmer <- lmer(yield ~ nitro*Variety+(1|Block/Variety), REML=TRUE, data=Oats)
+
+nlmeres <- c(varcomp_vcov(Oats.lme)[2,2], varcomp_vcov(Oats.lme)[3,3])
+lme4res <- c(vcov.lmerMod(Oats.lmer, full = TRUE, ranpar = "var")[7, 7], 
+             vcov.lmerMod(Oats.lmer, full = TRUE, ranpar = "var")[9, 9])
+
+expect_true(all(abs(nlmeres-lme4res) < 1))
 
 
