@@ -34,7 +34,7 @@ estfun.lmerMod <- function(x, ...) {
 
   ## checks
   if(!(level %in% c(1L, 2L))) stop("invalid 'level' argument supplied")
-  if (length(parts$l_i) > 1L & level == 2L) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
+  #if (length(parts$l_i) > 1L & level == 2L) stop("Multiple cluster variables detected. Supply 'level=1' argument to estfun.lmerMod().")
   
   ## prepare shortcuts
   uluti <- length(parts$theta)
@@ -111,12 +111,14 @@ estfun.lmerMod <- function(x, ...) {
 
   ## Clusterwise scores if level==2
   if (level == 2) {
-    #index <- rep(1:parts$l_i, (parts$n/parts$l_i))
-    index <- parts$flist[[1]]
-    #index <- index[order(index)]
-    scoretemp <- aggregate(x = score, by = list(index), FUN = sum)
-    score <- as.matrix(scoretemp[,-1])
-    rownames(score) <- scoretemp[,1]
+    subscore <- vector("list", length(parts$flist))
+    for (i in 1: length(parts$flist)) {
+      index <- parts$flist[[i]]
+      subscore[[i]] <- aggregate(x = score, by = list(index), FUN = sum)
+    }
+    subscoretemp <- do.call(rbind, subscore)
+    score <- as.matrix(subscoretemp[,-1])
+    rownames(score) <- subscoretemp[,1]
   }
   
   return(score)
