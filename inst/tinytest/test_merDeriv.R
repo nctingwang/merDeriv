@@ -142,4 +142,14 @@ lme4res <- c(vcov.lmerMod(Oats.lmer, full = TRUE, ranpar = "var")[7, 7],
 
 expect_true(all(abs(nlmeres-lme4res) < 1))
 
+## check multiple groups score
+nestmod <- lmer(strength ~ 1 + (1|sample) + (1|batch), Pastes, REML = TRUE)
+crossmod <- lmer(diameter ~ 1 + (1|plate) + (1|sample),
+                 Penicillin, REML = TRUE)
+Oats.lmer <- lmer(yield ~ nitro*Variety+(1|Block/Variety), REML=TRUE, data=Oats)
+
+expect_true(sum(dim(estfun.lmerMod(nestmod, level = "cluster"))==c(40,4))==2)
+expect_true(sum(dim(estfun.lmerMod(crossmod, level = "cluster"))==c(30,4))==2)
+expect_true(sum(dim(estfun.lmerMod(Oats.lmer, level = "cluster"))==c(24,9))==2)
+
 
