@@ -1,4 +1,3 @@
-
 library("lme4")
 library("lavaan")
 library("mirt")
@@ -131,3 +130,9 @@ expect_true(all(abs(colSums(score)) < .3))
 expect_true(dim(vcov(m0, full=TRUE))[1] == 3)
 
 
+## Gamma example
+set.seed(983)
+dd <- cbind.data.frame(y=rgamma(100,1,1), x1=rnorm(100,5), x2=rnorm(100,3),
+                       id=rep(1:10,each=10))
+m0 <- glmer(y ~ x1 + x2 + (1|id), family=Gamma, data=dd)
+## expect_true(abs(sum(llcont.glmerMod(m0)) - logLik(m0)) < .001)
