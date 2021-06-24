@@ -1,6 +1,8 @@
 library("lme4")
 library("lavaan")
 library("mirt")
+library("nlme")
+library("lmeInfo")
 
 ## lmm models checks.
 lme4fit <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy, REML = FALSE)
@@ -128,6 +130,26 @@ m0 <- glmer(y ~ x + (1|f), family = "poisson", data = dd, nAGQ = 20)
 score <- estfun.glmerMod(m0)
 expect_true(all(abs(colSums(score)) < .3))
 expect_true(dim(vcov(m0, full=TRUE))[1] == 3)
+
+## check multiple groups vcov
+Oats.lme <- lme(yield ~ nitro*Variety, random=~1|Block/Variety, method="REML", data=Oats)
+Oats.lmer <- lmer(yield ~ nitro*Variety+(1|Block/Variety), REML=TRUE, data=Oats)
+
+nlmeres <- c(varcomp_vcov(Oats.lme)[2,2], varcomp_vcov(Oats.lme)[3,3])
+lme4res <- c(vcov.lmerMod(Oats.lmer, full = TRUE, ranpar = "var")[7, 7], 
+             vcov.lmerMod(Oats.lmer, full = TRUE, ranpar = "var")[9, 9])
+
+expect_true(all(abs(nlmeres-lme4res) < 1))
+
+## check multiple groups score
+nestmod <- lmer(strength ~ 1 + (1|sample) + (1|batch), Pastes, REML = TRUE)
+crossmod <- lmer(diameter ~ 1 + (1|plate) + (1|sample),
+                 Penicillin, REML = TRUE)
+Oats.lmer <- lmer(yield ~ nitro*Variety+(1|Block/Variety), REML=TRUE, data=Oats)
+
+expect_true(sum(dim(estfun.lmerMod(nestmod, level = "cluster"))==c(40,4))==2)
+expect_true(sum(dim(estfun.lmerMod(crossmod, level = "cluster"))==c(30,4))==2)
+expect_true(sum(dim(estfun.lmerMod(Oats.lmer, level = "cluster"))==c(24,9))==2)
 
 
 ## Gamma example

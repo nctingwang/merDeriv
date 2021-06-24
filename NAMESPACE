@@ -36,6 +36,7 @@ importFrom("lavaan",
 importFrom("numDeriv",
            "hessian")
 
+
 ## S3method
 S3method(estfun, lmerMod)
 S3method(vcov, lmerMod)
