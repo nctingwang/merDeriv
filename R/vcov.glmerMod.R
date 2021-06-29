@@ -1,4 +1,6 @@
 vcov.glmerMod <- function(object, ...) {
+  if (object@call$family!="binomial" & object@call$family!="poisson") stop("family has to be binomial or poisson) 
+
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full

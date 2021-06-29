@@ -8,6 +8,8 @@ estfun.glmerMod <- function(x,...){
   if (length(x@theta) > 1) warning("score sums may be far from 0 due to the fact that nAGQ = 1 is used during model estimation.")
   if (!is.null(x@call$weights)) stop("Models with weights specification is currently not supported.")
   if (length(grep("cbind", x@call$formula))!=0) stop("Models with cbind specification are currently not supported.")
+  if (x@call$family!="binomial" & x@call$family!="poisson") stop("family has to be binomial or poisson") 
+  
     
   ## extract nAGQ used in model fit, unless overridden by ...
   ddd <- list(...)

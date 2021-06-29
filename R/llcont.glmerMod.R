@@ -7,7 +7,8 @@ llcont.glmerMod <- function(x, ...){
   ## check multiple groups.
   if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
   if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")
-  if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification are currently not supported.")    
+  if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification are currently not supported.")  
+  if (x@call$family!="binomial" & x@call$family!="poisson") stop("family has to be binomial or poisson") 
 
   ## extract nAGQ used in model fit, unless overridden by ...
   ddd <- list(...)
@@ -93,7 +94,7 @@ llcont.glmerMod <- function(x, ...){
 
       x.star <- etasds * (sqrt(2)*XW$x) + etamns
 
-      lik[j] <- sum(ly.prod(x.star, Data[grps==grpnm[j]],
+      lik[j] <- sum(ly.prod(x, x.star, Data[grps==grpnm[j]],
                   fe.pred[grps==grpnm[j]],
                   as.matrix(Z[grps==grpnm[j],]),
                   re.modes[[1]],
@@ -113,7 +114,7 @@ llcont.glmerMod <- function(x, ...){
         lav_mvnorm_dmvnorm(x.star, Mu = rep(0, ndim),
         Sigma = VarCov[[1]], log = FALSE)
 
-      lik[j] <- sum(ly.prod(S = x.star,
+      lik[j] <- sum(ly.prod(x,S = x.star,
                   Y = Data[grps==grpnm[j]],
                   fe.pred = fe.pred[grps==grpnm[j]],
                   Zi = as.matrix(Z[grps==grpnm[j],]),
@@ -131,7 +132,7 @@ llcont.glmerMod <- function(x, ...){
 ## single observation, multiple values (quadrature points) for eta
 ## x are quadrature points
 ## Y is the data
-ly.prod <- function(S, Y = NULL, fe.pred, Zi, re.modes, grp, fam) {
+ly.prod <- function(x, S, Y = NULL, fe.pred, Zi, re.modes, grp, fam) {
     Y <- as.numeric(Y)
 
     # number of quadrature points
@@ -156,8 +157,9 @@ ly.prod <- function(S, Y = NULL, fe.pred, Zi, re.modes, grp, fam) {
         # log-likelihood
         # FIXME does fam$aic() work this way for other families
         # besides binomial?
-        logly <- -fam$aic(Y, n, yhat, wt = 1)/2
-        #logly <- dbinom(Y, n, yhat, log = TRUE)
+
+        logly <- - fam$aic(Y, 1, yhat, wt = 1)/2
+
 
         out[i] <- exp(sum(logly))
     }
