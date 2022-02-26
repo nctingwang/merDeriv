@@ -1,5 +1,5 @@
 vcov.glmerMod <- function(object, ...) {
-  if (!(grepl("binomial", x@call$family)!="binomial" | grepl("poisson", x@call$family))) stop("family has to be binomial or poisson") 
+  if (!(grepl("binomial", x@call$family[1])!="binomial" | grepl("poisson", x@call$family[1]))) stop("family has to be binomial or poisson") 
 
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
