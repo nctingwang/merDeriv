@@ -8,7 +8,7 @@ estfun.glmerMod <- function(x,...){
   if (length(x@theta) > 1) warning("score sums may be far from 0 due to the fact that nAGQ = 1 is used during model estimation.")
   if (!is.null(x@call$weights)) stop("Models with weights specification is currently not supported.")
   if (length(grep("cbind", x@call$formula))!=0) stop("Models with cbind specification are currently not supported.")
-  if (x@call$family!="binomial" & x@call$family!="poisson") stop("family has to be binomial or poisson") 
+  if (!(grepl("binomial", x@call$family)!="binomial" | grepl("poisson", x@call$family))) stop("family has to be binomial or poisson") 
   
     
   ## extract nAGQ used in model fit, unless overridden by ...
@@ -237,7 +237,7 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam,
     eta <- if(is.matrix(S)) t(S[i,,drop = FALSE]) else S[i]
     tmpre[grp,] <- eta
     linkyhat <- as.numeric(fe.pred + Zi %*% as.numeric(t(tmpre)))
-    
+
     # use inverse link function on yhat
     yhat <- fam$linkinv(linkyhat)
     Zi_resid <- crossprod(Zi, as.matrix(Y - yhat))
