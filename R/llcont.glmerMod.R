@@ -96,7 +96,7 @@ llcont.glmerMod <- function(x, ...){
 
       lik[j] <- sum(ly.prod(x, x.star, Data[grps==grpnm[j]],
                   fe.pred[grps==grpnm[j]],
-                  as.matrix(Z[grps==grpnm[j],]),
+                  Z[grps==grpnm[j], , drop = FALSE],
                   re.modes[[1]],
                   as.numeric(grpnm[j]), fam) * w.star )
     } else {
@@ -117,7 +117,7 @@ llcont.glmerMod <- function(x, ...){
       lik[j] <- sum(ly.prod(x,S = x.star,
                   Y = Data[grps==grpnm[j]],
                   fe.pred = fe.pred[grps==grpnm[j]],
-                  Zi = as.matrix(Z[grps==grpnm[j],]),
+                  Zi = Z[grps==grpnm[j], , drop = FALSE],
                   re.modes = re.modes[[1]],
                   grp = which(grpnm == grpnm[j]),
                   fam = fam) * w.star )
