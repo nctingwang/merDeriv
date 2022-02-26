@@ -117,10 +117,10 @@ estfun.glmerMod <- function(x,...){
       x.star <- etasds * (sqrt(2)*XW$x) + etamns
 
       out[j,] <- (t(score.prod(S = x.star,
-                  Xi = as.matrix(X[grps==grpnm[j],]),
+                  Xi = X[grps==grpnm[j], , drop = FALSE],
                   Y = Data[grps==grpnm[j]],
                   fe.pred = fe.pred[grps==grpnm[j]],
-                  Zi = as.matrix(Z[grps==grpnm[j],]),
+                  Zi = Z[grps==grpnm[j], , drop = FALSE],
                   re.modes = re.modes[[1]],
                   grp = as.numeric(grpnm[j]), fam = fam,
                   devLambda = devLambda, Lambda = parts$Lambda,
@@ -147,7 +147,7 @@ estfun.glmerMod <- function(x,...){
       C <- re.vars[[1]][,,j]
       if(npd) C <- nearPD(C)$mat
       C <- t(chol(C))
-      etamns <- re.modes[[1]][j,]
+      etamns <- re.modes[[1]][j,,]
 
       x.star <- t(as.matrix(C %*% t(XW$x) + as.numeric(etamns)))
       lav_mvnorm_dmvnorm <- getFromNamespace("lav_mvnorm_dmvnorm", "lavaan")
@@ -157,10 +157,10 @@ estfun.glmerMod <- function(x,...){
             log = FALSE)
 
       out[j,] <- (t(score.prod(S = x.star,
-                               Xi = as.matrix(X[grps==grpnm[j],]),
+                               Xi = X[grps==grpnm[j], , drop = FALSE],
                                Y = Data[grps==grpnm[j]],
                                fe.pred = fe.pred[grps==grpnm[j]],
-                               Zi = as.matrix(Z[grps==grpnm[j],]),
+                               Zi = Z[grps==grpnm[j], , drop = FALSE],
                                re.modes = re.modes[[1]],
                                grp = as.numeric(grpnm[j]), fam = fam, 
                                devLambda = devLambda, Lambda = parts$Lambda,
@@ -243,7 +243,7 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam,
     Zi_resid <- crossprod(Zi, as.matrix(Y - yhat))
     u  <- iLambda %*% as.vector(t(tmpre))
     iLam_dL <- lapply(devLambda, function(x) x %*% u)
-    
+
     # score matrix with canonical link.
     ranscore <- rep(NA, length(devLambda))
     if(fam$link == do.call(fam$family, list())$link){
@@ -254,9 +254,13 @@ score.prod <- function(S, Xi, Y = NULL, fe.pred, Zi, re.modes, grp, fam,
       }
     } else {
       ## non-canonical link. 
-      ## invD and invV. 
-      invD <- diag(fam$mu.eta(linkyhat))
-      invV <- aphi * diag(1/fam$variance(yhat))
+      ## invD and invV.
+      invD <- fam$mu.eta(linkyhat)
+      invV <- aphi / fam$variance(yhat)
+      if(nrow(Xi) > 1) {
+        invD <- diag(invD)
+        invV <- diag(invV)
+      }
       glmscore <- tcrossprod(tcrossprod(crossprod(Xi, invD),
         invV), t(as.matrix(Y-yhat)))
       Zi_resid <- tcrossprod(tcrossprod(crossprod(Zi, invD),
