@@ -17,6 +17,17 @@ score2 <- estfun(lme4fit, ranpar = "var", level = 2)
 ## vcov check
 expect_true(dim(vcov(lme4fit, full = TRUE))[1] == 6L)
 
+## cluster of size 1
+sub1 <- which(sleepstudy$Subject == unique(sleepstudy$Subject)[1])
+ss2 <- sleepstudy[-(sub1[-1]),]
+subfit <- lmer(Reaction ~ Days + (Days|Subject), data=ss2, REML=FALSE)
+
+expect_equal(as.numeric(round(sum(llcont(subfit, level = 1)),4)), 
+             as.numeric(round(logLik(subfit),4)))
+
+expect_equal(class(estfun(subfit))[1], "matrix")
+
+## compare to lavaan
 testwide <- as.data.frame(t(matrix(sleepstudy$Reaction, 10, length(unique(sleepstudy$Subject)))))
 names(testwide) <- paste("d", 1:10, sep = "")
 testwide$Subject <- unique(sleepstudy$Subject)
