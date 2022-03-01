@@ -164,8 +164,8 @@ expect_true(sum(dim(estfun.lmerMod(Oats.lmer, level = "cluster"))==c(24,9))==2)
 
 
 ## Gamma example
-set.seed(983)
-dd <- cbind.data.frame(y=rgamma(100,1,2), x1=rnorm(100,5), x2=rnorm(100,3),
-                       id=rep(1:100,each=10))
-m0 <- glmer(y ~ x1 + x2 + (1|id), family=Gamma, data=dd)
-expect_true(abs(sum(llcont.glmerMod(m0)) - logLik(m0)) < .001)
+# set.seed(983)
+# dd <- cbind.data.frame(y=rgamma(100,1,2), x1=rnorm(100,5), x2=rnorm(100,3),
+#                        id=rep(1:100,each=10))
+# m0 <- glmer(y ~ x1 + x2 + (1|id), family=Gamma, data=dd)
+# expect_true(abs(sum(llcont.glmerMod(m0)) - logLik(m0)) < .001)
