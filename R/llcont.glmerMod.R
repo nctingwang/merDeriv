@@ -8,7 +8,7 @@ llcont.glmerMod <- function(x, ...){
   if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
   if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")
   if (length(grep("cbind", x@call$formula))!=0) stop ("Models with cbind specification are currently not supported.")  
-  if (!(grepl("binomial", x@call$family)!="binomial" | grepl("poisson", x@call$family))) stop("family has to be binomial or poisson") 
+  if (!(family(x)$family %in% c("binomial", "poisson"))) stop("family has to be binomial or poisson") 
 
   ## extract nAGQ used in model fit, unless overridden by ...
   ddd <- list(...)

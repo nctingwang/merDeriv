@@ -3,7 +3,7 @@ importFrom("methods",
            "is", "new", "slot")
 
 importFrom("stats", 
-           "vcov", "aggregate", "dnorm", "glm", "nobs", "predict")
+           "vcov", "aggregate", "dnorm", "glm", "nobs", "predict", "family")
 
 importFrom("Matrix", 
            "forceSymmetric", "lu", "Diagonal", "nearPD")
