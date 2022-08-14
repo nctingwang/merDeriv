@@ -1,6 +1,6 @@
 Package: merDeriv
 Title: Case-Wise and Cluster-Wise Derivatives for Mixed Effects Models 
-Version: 0.2-4
+Version: 0.2-5
 Authors@R: c(person(given = "Ting", family = "Wang",
                     role = c("aut", "cre"),
                     email = "szpku.grady@gmail.com"),
@@ -15,7 +15,6 @@ Description: Compute case-wise and cluster-wise derivative for mixed effects mod
 Depends: R (>= 3.2.3), lme4 (>= 1.1-10), stats, methods, nonnest2, sandwich, lavaan
 Imports: utils, Matrix, numDeriv
 License: GPL (>= 2)
-LazyData: yes
 URL: https://github.com/nctingwang/merDeriv
 NeedsCompilation: no
 Maintainer: Ting Wang <szpku.grady@gmail.com>

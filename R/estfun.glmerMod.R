@@ -122,7 +122,7 @@ estfun.glmerMod <- function(x,...){
                   fe.pred = fe.pred[grps==grpnm[j]],
                   Zi = Z[grps==grpnm[j], , drop = FALSE],
                   re.modes = re.modes[[1]],
-                  grp = as.numeric(grpnm[j]), fam = fam,
+                  grp = grpnm[j], fam = fam,
                   devLambda = devLambda, Lambda = parts$Lambda,
                   iLambda = iLambda,
                   formula = x@call$formula, frame = x@frame)) %*% w.star)
@@ -162,7 +162,7 @@ estfun.glmerMod <- function(x,...){
                                fe.pred = fe.pred[grps==grpnm[j]],
                                Zi = Z[grps==grpnm[j], , drop = FALSE],
                                re.modes = re.modes[[1]],
-                               grp = as.numeric(grpnm[j]), fam = fam, 
+                               grp = grpnm[j], fam = fam, 
                                devLambda = devLambda, Lambda = parts$Lambda,
                                iLambda = iLambda,
                                formula = x@call$formula, frame = x@frame))
