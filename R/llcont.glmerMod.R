@@ -98,7 +98,7 @@ llcont.glmerMod <- function(x, ...){
                   fe.pred[grps==grpnm[j]],
                   Z[grps==grpnm[j], , drop = FALSE],
                   re.modes[[1]],
-                  as.numeric(grpnm[j]), fam) * w.star )
+                  grpnm[j], fam) * w.star )
     } else {
       ## from integration3_cfa.R (multivariate version)
       ## FIXME: if >1 grouping var, length(re.vars) > 1
@@ -119,7 +119,7 @@ llcont.glmerMod <- function(x, ...){
                   fe.pred = fe.pred[grps==grpnm[j]],
                   Zi = Z[grps==grpnm[j], , drop = FALSE],
                   re.modes = re.modes[[1]],
-                  grp = which(grpnm == grpnm[j]),
+                  grp = grpnm[j],
                   fam = fam) * w.star )
     }
   }
