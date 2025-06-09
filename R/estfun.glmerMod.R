@@ -48,7 +48,7 @@ estfun.glmerMod <- function(x,...){
 
   ## 1b. obtain family info
   fam <- x@call$family
-  if(class(fam) == "name" | class(fam) == "character"){
+  if(inherits(fam, "name") | inherits(fam, "character")){
     ## no link specified
     fam <- do.call(as.character(fam), list())
   } else {
