@@ -10,7 +10,7 @@
 \method{llcont}{lmerMod}(x, \dots)
 }
 \arguments{
-  \item{x}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item{x}{An object of class \code{\link[lme4]{lmerMod-class}}.}
   \item{\dots}{additional arguments, including \code{level}
     (\code{level = 2} is default; see details).}
 }

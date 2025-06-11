@@ -4,13 +4,13 @@
   Mixed Effects Models}
 \description{This function calculates the variance-covariance 
   matrix for all parameters (fixed, random effect, and residual) in a linear 
-  mixed effects model of class \code{\linkS4class{lmerMod}}.  
+  mixed effects model of class \code{\link[lme4]{lmerMod-class}}.  
 }
 \usage{
 \method{vcov}{lmerMod}(object, \dots)
 }
 \arguments{
-  \item{object}{An object of class \code{\linkS4class{lmerMod}}.}
+  \item{object}{An object of class \code{\link[lme4]{lmerMod-class}}.}
   \item{\dots}{additional arguments, including \code{full}, 
      \code{information} and \code{ranpar} (\code{full = FALSE},  
      \code{information = "expected"} and \code{ranpar = "var"} 

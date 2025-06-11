@@ -6,13 +6,13 @@
   This function calculates the bread component of the Huber-White 
   sandwich estimator (variance covariance matrix multiplied by 
   the number of clusters) for a generalized linear mixed effects model 
-  of class \code{\linkS4class{glmerMod}}.  
+  of class \code{\link[lme4]{glmerMod-class}}.  
 }
 \usage{
 \method{bread}{glmerMod}(x, \dots)
 }
 \arguments{
-  \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
+  \item{x}{An object of class \code{\link[lme4]{glmerMod-class}.}}
   \item{\dots}{additional arguments,
     including \code{full} and \code{ranpar} (\code{full = FALSE},
     \code{ranpar = "var"}; see details).}
