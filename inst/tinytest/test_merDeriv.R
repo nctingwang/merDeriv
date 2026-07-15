@@ -33,11 +33,9 @@ names(testwide) <- paste("d", 1:10, sep = "")
 testwide$Subject <- unique(sleepstudy$Subject)
 
 ## describe latent model
-latent <- 'i =~ 1*d1 + 1*d2 + 1*d3 + 1*d4 + 1*d5
-+ 1*d6 + 1*d7 + 1*d8 + 1*d9 + 1*d10
+latent <- 'i =~ 1*d1 + 1*d2 + 1*d3 + 1*d4 + 1*d5 + 1*d6 + 1*d7 + 1*d8 + 1*d9 + 1*d10
 
-s = ~ 0*d1 + 1*d2 + 2*d3 + 3*d4 + 4*d5
-+ 5*d6 + 6*d7 + 7*d8 + 8*d9 + 9*d10
+s =~ 0*d1 + 1*d2 + 2*d3 + 3*d4 + 4*d5 + 5*d6 + 6*d7 + 7*d8 + 8*d9 + 9*d10
 
 d1 ~~ evar*d1
 d2 ~~ evar*d2
