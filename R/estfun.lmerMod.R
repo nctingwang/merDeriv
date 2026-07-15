@@ -45,8 +45,13 @@ estfun.lmerMod <- function(x, ...) {
   M <- solve(chol(V))
   invV <- tcrossprod(M, M)
   yXbesoV <- crossprod(yXbe, invV)
-  LambdaInd <- parts$Lambda
+  ## Lind maps theta into the slots of Lambdat (not Lambda), so fill
+  ## Lambdat with the parameter indices and transpose; assigning Lind
+  ## directly into Lambda@x scrambles parameters when a random-effect
+  ## block is 3x3 or larger.
+  LambdaInd <- parts$Lambdat
   LambdaInd@x[] <- parts$Lind
+  LambdaInd <- t(LambdaInd)
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))
