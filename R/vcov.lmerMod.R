@@ -34,8 +34,13 @@ vcov.lmerMod <- function(object, ...) {
   V <- (tcrossprod(Zlam, Zlam) + Diagonal(parts$n, 1)) * (parts$sigma)^2
   M <- solve(chol(V))
   invV <- tcrossprod(M, M)
-  LambdaInd <- parts$Lambda
-  LambdaInd@x[] <- parts$Lind 
+  ## Lind maps theta into the slots of Lambdat (not Lambda), so fill
+  ## Lambdat with the parameter indices and transpose; assigning Lind
+  ## directly into Lambda@x scrambles parameters when a random-effect
+  ## block is 3x3 or larger.
+  LambdaInd <- parts$Lambdat
+  LambdaInd@x[] <- parts$Lind
+  LambdaInd <- t(LambdaInd)
   invVX <- crossprod(parts$X, invV)
   Pmid <- solve(crossprod(parts$X, t(invVX)))
   P <- invV - tcrossprod(crossprod(invVX, Pmid), t(invVX))
@@ -93,12 +98,12 @@ vcov.lmerMod <- function(object, ...) {
           tcrossprod(crossprod(P, devV[[x[1]]]), P), t(devV[[x[2]]])))))
       }
       if(information == "observed") {
-        ranhes[lower.tri(ranhes, diag = TRUE)] <- apply(entries, 1, 
-          function(x) -as.numeric((1/2) * lav_matrix_trace(
-          tcrossprod(tcrossprod(crossprod(P, devV[[x[1]]]), P), 
+        ranhes[lower.tri(ranhes, diag = TRUE)] <- apply(entries, 1,
+          function(x) as.vector(-as.numeric((1/2) * lav_matrix_trace(
+          tcrossprod(tcrossprod(crossprod(P, devV[[x[1]]]), P),
           t(devV[[x[2]]])))) + tcrossprod((tcrossprod((crossprod(
           yXbe, tcrossprod(tcrossprod(crossprod(invV,
-          devV[[x[1]]]), P), t(devV[[x[2]]])))), invV)), t(yXbe)))             
+          devV[[x[1]]]), P), t(devV[[x[2]]])))), invV)), t(yXbe))))
       }      
     }
     ranhes <- forceSymmetric(ranhes, uplo = "L")
