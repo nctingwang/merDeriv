@@ -45,12 +45,14 @@
 \examples{
 \dontrun{
 # The cbpp example
-data(finance, package = "smdata")
+if (require("smdata")) {
+   data(finance, package = "smdata")
 
-lme4fit <- glmer(corr ~ jmeth + (1 | item), data = finance,
+   lme4fit <- glmer(corr ~ jmeth + (1 | item), data = finance,
                  family = binomial, nAGQ = 20)
 
-# bread component for all parameters
-bread(lme4fit, full = TRUE, ranpar = "var")
+  # bread component for all parameters
+  bread(lme4fit, full = TRUE, ranpar = "var")
+ }
 }
 }
