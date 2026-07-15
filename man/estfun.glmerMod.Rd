@@ -11,7 +11,7 @@
 \method{estfun}{glmerMod}(x, \dots)
 }
 \arguments{
-  \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
+  \item{x}{An object of class \code{\link[lme4]{glmerMod-class}}.}
   \item{\dots}{Additional arguments, including \code{ranpar}
     (\code{ranpar = "var"} is default; see details)}.
 }

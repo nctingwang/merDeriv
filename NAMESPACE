@@ -3,7 +3,7 @@ importFrom("methods",
            "is", "new", "slot")
 
 importFrom("stats", 
-           "vcov", "aggregate", "dnorm", "glm", "nobs", "predict")
+           "vcov", "aggregate", "dnorm", "glm", "nobs", "predict", "family")
 
 importFrom("Matrix", 
            "forceSymmetric", "lu", "Diagonal", "nearPD")
@@ -33,11 +33,9 @@ importFrom("nonnest2",
 importFrom("lavaan", 
            "lav_matrix_trace")
 
-importFrom("matrixcalc", 
-           "elimination.matrix", "commutation.matrix")
-
 importFrom("numDeriv",
            "hessian")
+
 
 ## S3method
 S3method(estfun, lmerMod)

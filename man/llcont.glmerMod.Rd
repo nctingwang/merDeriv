@@ -10,7 +10,7 @@
 \method{llcont}{glmerMod}(x, \dots)
 }
 \arguments{
-  \item{x}{An object of class \code{\linkS4class{glmerMod}}.}
+  \item{x}{An object of class \code{\link[lme4]{glmerMod-class}}.}
   \item{\dots}{Additional arguments.}
 }
 \value{A vector of log-likelihoods whose length is
