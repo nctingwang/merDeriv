@@ -1,7 +1,7 @@
 Package: merDeriv
 Title: Case-Wise and Cluster-Wise Derivatives for Mixed Effects Models
-Version: 0.2-5
-Date: 2026-07-15
+Version: 0.2-6
+Date: 2026-07-16
 Authors@R: c(person(given = "Ting", family = "Wang",
                     role = c("aut", "cre"),
                     email = "szpku.grady@gmail.com"),

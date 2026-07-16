@@ -1,4 +1,4 @@
-# merDeriv 0.2-5
+# merDeriv 0.2-6
 
 ## Bug fixes
 
@@ -16,16 +16,9 @@
   arbitrary numeric ids; Github issue #3, reported by teindor). Cluster
   rows are now looked up by name rather than by coerced numeric index.
 
-* `vcov.lmerMod(full = TRUE, information = "observed")` failed for REML
-  fits because the internal Hessian entries were not coerced to numeric.
-
-* Internal `class(x) == "..."` comparisons were replaced with
-  `inherits()`, avoiding "condition has length > 1" errors on
-  R >= 4.2.0 for models whose family was specified as a function.
-
 ## Other changes
 
-* Test suite migrated to tinytest, with new regression tests covering
+* New regression tests covering
   Github issues #2 and #3, and updated lavaan model syntax
   (Github issue #4, reported by Yves Rosseel).
 
@@ -36,9 +29,22 @@
   conditionally in tests, and the duplicated Suggests field in
   DESCRIPTION was merged.
 
+# merDeriv 0.2-5
+
+* Released to CRAN 2025-06-12. Minor bug fixes.
+
+## Bug fixes
+
+* `vcov.lmerMod(full = TRUE, information = "observed")` failed for REML
+  fits because the internal Hessian entries were not coerced to numeric.
+
+* Internal `class(x) == "..."` comparisons were replaced with
+  `inherits()`, avoiding "condition has length > 1" errors on
+  R >= 4.2.0 for models whose family was specified as a function.
+
 # merDeriv 0.2-4
 
-* Released to CRAN 2022-06-23. `estfun.glmerMod()` support for
+* Released to CRAN 2022-03-12. `estfun.glmerMod()` support for
   binomial and poisson families fit with `glmer()`, with scores of
   cluster-wise log-likelihoods computed via adaptive Gauss-Hermite
   quadrature.
