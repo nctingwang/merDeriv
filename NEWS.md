@@ -10,11 +10,8 @@
   matrix is now built from `Lambdat`, which `Lind` actually indexes,
   instead of `Lambda`.
 
-* `estfun.glmerMod()` and `llcont.glmerMod()` failed with
-  "subscript out of bounds" when the cluster id variable was not a
-  consecutive integer sequence starting at 1 (e.g., character ids or
-  arbitrary numeric ids; Github issue #3, reported by teindor). Cluster
-  rows are now looked up by name rather than by coerced numeric index.
+* `vcov.lmerMod(full = TRUE, information = "observed")` failed for REML
+  fits because the internal Hessian entries were not coerced to numeric.
 
 ## Other changes
 
@@ -35,8 +32,11 @@
 
 ## Bug fixes
 
-* `vcov.lmerMod(full = TRUE, information = "observed")` failed for REML
-  fits because the internal Hessian entries were not coerced to numeric.
+* `estfun.glmerMod()` and `llcont.glmerMod()` failed with
+  "subscript out of bounds" when the cluster id variable was not a
+  consecutive integer sequence starting at 1 (e.g., character ids or
+  arbitrary numeric ids; Github issue #3, reported by teindor). Cluster
+  rows are now looked up by name rather than by coerced numeric index.
 
 * Internal `class(x) == "..."` comparisons were replaced with
   `inherits()`, avoiding "condition has length > 1" errors on
