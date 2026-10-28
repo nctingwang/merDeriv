@@ -3,7 +3,6 @@ llcont.glmerMod <- function(x, ...){
   ## one grouping variable (no crossed or nested random effects
   ## allowed for now). Much code is taken from Yves.
 
-  if (!is(x, "glmerMod")) stop("llcont.glmerMod() only works for glmer() models.")
   ## check multiple groups.
   if (length(getME(x, "l_i")) > 1L) stop("Multiple cluster variables detected. This type of model is currently not supported.")
   if (!is.null(x@call$weights)) stop ("Models with weights specification is currently not supported.")

@@ -1,7 +1,5 @@
 vcov.lmerMod <- function(object, ...) {
   
-  if (!is(object, "lmerMod")) stop("vcov.lmerMod() only works for lmer() models.")
-  
   dotdotdot <- list(...)
   if("full" %in% names(dotdotdot)){
     full <- dotdotdot$full

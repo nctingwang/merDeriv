@@ -1,6 +1,5 @@
 bread.lmerMod <- function (x, ...){  
   ## get all elements by getME and exclude multiple random effect models.
-  if (!is(x, "lmerMod")) stop("bread.lmerMod() only works for lmer() models.")
   
   parts <- getME(x, "ALL")
   if (length(parts$l_i) > 1) stop("Multiple cluster variables detected. Robust SEs are unavailable.")
